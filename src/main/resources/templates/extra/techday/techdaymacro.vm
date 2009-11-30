@@ -1,0 +1,46 @@
+#set ($renderer=$action.getGlobalHelper().getWikiStyleRenderer())
+
+<table class="grid">
+    <tr>
+           <th>Name</th>
+           <th>Vortragender</th>
+           <th>Typ</th>
+           <th>Beschreibung</th>
+           <th>Kommentar</th>
+           <th>Interessenten</th>
+           <th>Anzahl der Interessenten</th>
+           <th>Aktion</th>
+    </tr>
+    #set ($lastType="")
+    #foreach ($talk in $talks)
+        #if ($lastType != $talk.type)
+            #set ($lastType=$talk.type)
+            <tr>
+                <th colspan="8">
+                $lastType
+                </th>
+            </tr>
+        #end
+        <tr>
+            <td>$talk.name</td>
+            <td>$talk.speaker</td>
+            <td>$talk.type</td>
+            <td>$talk.description</td>
+            <td>$talk.comment</td>
+            <td>$talk.usersAsString</td>
+            <td>$talk.totalAudience</td>
+            #set ($interested = $talk.isInterested($req.remoteUser))
+            <td align="center">
+                #if ($interested)
+                    <a href="${req.contextPath}$generalUtil.customGetPageUrl($content)&techday.idname=$generalUtil.urlEncode($talk.idName)&techday.interested=no">
+                       Nicht mehr interessiert
+                    </a>
+                #else
+                    <a href="${req.contextPath}$generalUtil.customGetPageUrl($content)&techday.idname=$generalUtil.urlEncode($talk.idName)&techday.interested=yes">
+                       Interessiert
+                    </a>
+                #end
+            </td>
+        </tr>
+    #end
+</table>

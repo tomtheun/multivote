@@ -1,0 +1,12 @@
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="TNG Technology Consulting GmbH" url="http://www.tngtech.com"/>
+    </plugin-info>
+
+    <macro name='techday-plugin' class='${project.groupId}.TechdayMacro' key='techday-plugin'>
+        <!-- TODO: Add macro description -->
+        <!-- <description></description> -->
+    </macro>
+</atlassian-plugin>
