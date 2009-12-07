@@ -4,7 +4,7 @@
     <tr>
            <th>Name</th>
            <th>Vortragender</th>
-           <th>Typ</th>
+           <!-- th>Typ</th -->
            <th>Beschreibung</th>
            <th>Kommentar</th>
            <th>Interessenten</th>
@@ -24,7 +24,7 @@
         <tr>
             <td>$renderer.convertWikiToXHtml($content.toPageContext(), $talk.name)</td>
             <td>$renderer.convertWikiToXHtml($content.toPageContext(), $talk.speaker)</td>
-            <td>$talk.type</td>
+            <!-- td>$talk.type</td -->
             <td>$renderer.convertWikiToXHtml($content.toPageContext(), $talk.description)</td>
             <td>$renderer.convertWikiToXHtml($content.toPageContext(), $talk.comment)</td>
             <td>$talk.usersAsString</td>
