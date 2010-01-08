@@ -1,4 +1,4 @@
-#set ($renderer=$action.getGlobalHelper().getWikiStyleRenderer())
+#set ($renderer=$wikiStyleRenderer)
 
 <table class="grid">
     <tr>

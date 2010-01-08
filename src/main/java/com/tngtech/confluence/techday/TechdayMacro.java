@@ -17,6 +17,7 @@ import com.atlassian.confluence.renderer.PageContext;
 import com.atlassian.confluence.renderer.radeox.macros.MacroUtils;
 import com.atlassian.confluence.util.velocity.VelocityUtils;
 import com.atlassian.renderer.RenderContext;
+import com.atlassian.renderer.WikiStyleRenderer;
 import com.atlassian.renderer.v2.RenderMode;
 import com.atlassian.renderer.v2.macro.BaseMacro;
 import com.atlassian.renderer.v2.macro.MacroException;
@@ -35,6 +36,8 @@ public class TechdayMacro extends BaseMacro {
     private static final Category log = Logger.getLogger(TechdayMacro.class);
 
     protected ContentPropertyManager contentPropertyManager;
+    
+    protected WikiStyleRenderer wikiStyleRenderer;
 
     public boolean isInline() {
         return false;
@@ -79,6 +82,7 @@ public class TechdayMacro extends BaseMacro {
         Map contextMap = MacroUtils.defaultVelocityContext();
         contextMap.put("talks", talks);
         contextMap.put("content", contentObject);
+        contextMap.put("wikiStyleRenderer", wikiStyleRenderer);
 
         try {
             return VelocityUtils.getRenderedTemplate("templates/extra/techday/techdaymacro.vm", contextMap);
@@ -157,5 +161,9 @@ public class TechdayMacro extends BaseMacro {
 
     public void setContentPropertyManager(ContentPropertyManager contentPropertyManager) {
         this.contentPropertyManager = contentPropertyManager;
+    }
+
+    public void setWikiStyleRenderer(WikiStyleRenderer wikiStyleRenderer) {
+        this.wikiStyleRenderer = wikiStyleRenderer;
     }
 }
