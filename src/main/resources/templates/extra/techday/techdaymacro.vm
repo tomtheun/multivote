@@ -27,7 +27,7 @@
             <!-- td>$talk.type</td -->
             <td>$renderer.convertWikiToXHtml($content.toPageContext(), $talk.description)</td>
             <td>$renderer.convertWikiToXHtml($content.toPageContext(), $talk.comment)</td>
-            <td>$talk.usersAsString</td>
+            <!-- <td>$talk.usersAsString</td> -->
             <td>$talk.totalAudience</td>
             #set ($interested = $talk.isInterested($req.remoteUser))
             <td align="center">
