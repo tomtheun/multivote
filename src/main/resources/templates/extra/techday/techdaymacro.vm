@@ -7,7 +7,7 @@
            <!-- th>Typ</th -->
            <th>Beschreibung</th>
            <th>Kommentar</th>
-           <th>Interessenten</th>
+           <!-- <th>Interessenten</th> -->
            <th>Anzahl der Interessenten</th>
            <th>Aktion</th>
     </tr>
