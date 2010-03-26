@@ -1,32 +1,27 @@
 package com.tngtech.confluence.techday;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Category;
-import org.apache.log4j.Logger;
-
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.core.ContentPropertyManager;
 import com.atlassian.confluence.renderer.PageContext;
 import com.atlassian.confluence.renderer.radeox.macros.MacroUtils;
+import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.confluence.util.velocity.VelocityUtils;
 import com.atlassian.renderer.RenderContext;
 import com.atlassian.renderer.WikiStyleRenderer;
 import com.atlassian.renderer.v2.RenderMode;
 import com.atlassian.renderer.v2.macro.BaseMacro;
 import com.atlassian.renderer.v2.macro.MacroException;
+import com.atlassian.spring.container.ContainerManager;
 import com.opensymphony.util.TextUtils;
 import com.opensymphony.webwork.ServletActionContext;
 import com.tngtech.confluence.techday.data.Talk;
 import com.tngtech.confluence.techday.data.TalkType;
-
 import edu.emory.mathcs.backport.java.util.Collections;
+import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 /**
  * This class provides the simple functionality of the techday planning plugin.
@@ -38,6 +33,7 @@ public class TechdayMacro extends BaseMacro {
     protected ContentPropertyManager contentPropertyManager;
     
     protected WikiStyleRenderer wikiStyleRenderer;
+    private UserAccessor userAccessor;
 
     public boolean isInline() {
         return false;
@@ -49,6 +45,10 @@ public class TechdayMacro extends BaseMacro {
 
     public RenderMode getBodyRenderMode() {
         return RenderMode.NO_RENDER;
+    }
+
+    public TechdayMacro() {
+        this.userAccessor = (UserAccessor) ContainerManager.getInstance().getContainerContext().getComponent("userAccessor");
     }
 
     /**
@@ -123,7 +123,7 @@ public class TechdayMacro extends BaseMacro {
                     type = lineTokenizer.nextToken().trim();
                     description = lineTokenizer.nextToken().trim();
                     comment = lineTokenizer.nextToken().trim();
-                    Talk talk = new Talk(idName, name, speaker, description, comment, TalkType.valueOf(type));
+                    Talk talk = new Talk(idName, name, speaker, description, comment, TalkType.valueOf(type), userAccessor);
                     String users = contentPropertyManager.getTextProperty(contentObject, buildPropertyString(idName));
                     if (users == null) users = "";
                     StringTokenizer userTokenizer = new StringTokenizer(users, ",");

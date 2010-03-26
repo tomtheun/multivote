@@ -32,11 +32,11 @@
             #set ($interested = $talk.isInterested($req.remoteUser))
             <td align="center">
                 #if ($interested)
-                    <a href="${req.contextPath}$generalUtil.customGetPageUrl($content)&techday.idname=$generalUtil.urlEncode($talk.idName)&techday.interested=no">
+                    <a href="${req.contextPath}$generalUtil.customGetPageUrl($content)&techday.idname=$generalUtil.urlEncode($talk.idName)&techday.interested=no" title="$talk.usersAsString">
                        Nicht mehr interessiert
                     </a>
                 #else
-                    <a href="${req.contextPath}$generalUtil.customGetPageUrl($content)&techday.idname=$generalUtil.urlEncode($talk.idName)&techday.interested=yes">
+                    <a href="${req.contextPath}$generalUtil.customGetPageUrl($content)&techday.idname=$generalUtil.urlEncode($talk.idName)&techday.interested=yes" title="$talk.usersAsString">
                        Interessiert
                     </a>
                 #end

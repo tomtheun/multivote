@@ -1,11 +1,18 @@
 package com.tngtech.confluence.techday.data;
 
+import com.atlassian.confluence.user.UserAccessor;
+import com.atlassian.user.User;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-
 public class Talk {
+    private static final Category log = Logger.getLogger(Talk.class);
 
     private String speaker;
     private String idName;
@@ -14,8 +21,9 @@ public class Talk {
     private String comment;
     private TalkType type;
     private Set<String> audience = new HashSet<String>();
+    private UserAccessor userAccessor;
 
-    public Talk(String idName, String name, String speaker, String description, String comment, TalkType type) {
+    public Talk(String idName, String name, String speaker, String description, String comment, TalkType type, UserAccessor userAccessor) {
         super();
         this.idName = idName;
         this.speaker = speaker;
@@ -23,6 +31,7 @@ public class Talk {
         this.comment = comment;
         this.description = description;
         this.type = type;
+        this.userAccessor = userAccessor;
     }
 
     public boolean isInterested(String user) {
@@ -33,8 +42,25 @@ public class Talk {
         return audience.size();
     }
 
+    private String getFullName(String userName) {
+        String fullName = userName;
+        User user = userAccessor.getUser(userName);
+        if (null != user) {
+            fullName = user.getFullName();
+        }
+        if (null == fullName) {
+            fullName = userName;
+        }
+        return fullName;
+    }
+
     public String getUsersAsString() {
-        return StringUtils.join(audience, ", ");
+        List<String> fullNames = new ArrayList<String>();
+
+        for (String userName: audience) {
+            fullNames.add(getFullName(userName));
+        }
+        return StringUtils.join(fullNames, ", ");
     }
 
     public void addAudience(String user) {
