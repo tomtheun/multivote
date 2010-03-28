@@ -16,7 +16,6 @@ import com.opensymphony.util.TextUtils;
 import com.opensymphony.webwork.ServletActionContext;
 import com.tngtech.confluence.techday.data.Talk;
 import com.tngtech.confluence.techday.data.TalkType;
-import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.log4j.Category;
 import org.apache.log4j.Logger;
 
@@ -35,6 +34,7 @@ public class TechdayMacro extends BaseMacro {
     protected WikiStyleRenderer wikiStyleRenderer;
     private UserAccessor userAccessor;
 
+    @Override
     public boolean isInline() {
         return false;
     }
@@ -56,11 +56,11 @@ public class TechdayMacro extends BaseMacro {
      */
     public String execute(Map params, String body, RenderContext renderContext) throws MacroException {
         ContentEntityObject contentObject = ((PageContext)renderContext).getEntity();
-        List<Talk> talks = buildTalksFromBody(params, body, contentObject);
+        List<Talk> talks = buildTalksFromBody(body, contentObject);
 
         HttpServletRequest request = ServletActionContext.getRequest();
         if (request != null) {
-            recordUsage(talks, request, contentObject, (String)params.get("users"));
+            recordUsage(talks, request, contentObject);
         }
 
         Collections.sort(talks, new Comparator<Talk>() {
@@ -79,7 +79,7 @@ public class TechdayMacro extends BaseMacro {
         });
 
         // now create a simple velocity context and render a template for the output
-        Map contextMap = MacroUtils.defaultVelocityContext();
+        Map<String, Object> contextMap = MacroUtils.defaultVelocityContext();
         contextMap.put("talks", talks);
         contextMap.put("content", contentObject);
         contextMap.put("wikiStyleRenderer", wikiStyleRenderer);
@@ -97,8 +97,11 @@ public class TechdayMacro extends BaseMacro {
      * It assumes that the format is:
      * <pre>idName|name|speaker|type|description|comment</pre>
      * Where type is the text version of the {@link TalkType} values.
+     * @param body of the Macro
+     * @param contentObject of the current page
+     * @return list of {@link Talk}
      */
-    private List<Talk> buildTalksFromBody(Map params, String body, ContentEntityObject contentObject) {
+    private List<Talk> buildTalksFromBody(String body, ContentEntityObject contentObject) {
 
         List<Talk> talks = new ArrayList<Talk>();
 
@@ -131,6 +134,9 @@ public class TechdayMacro extends BaseMacro {
                         talk.addAudience(userTokenizer.nextToken().trim());
                     }
                     talks.add(talk);
+                } else {
+                    log.debug("wrong number of tokens in line" + line);
+                    
                 }
             }
         }
@@ -141,7 +147,7 @@ public class TechdayMacro extends BaseMacro {
         return "techday." + idName;
     }
 
-    private void recordUsage(List<Talk> talks, HttpServletRequest request, ContentEntityObject contentObject, String users) {
+    private void recordUsage(List<Talk> talks, HttpServletRequest request, ContentEntityObject contentObject) {
         String remoteUser = request.getRemoteUser();
         String requestTalk = request.getParameter("techday.idname");
         String requestUse = request.getParameter("techday.interested");
@@ -159,10 +165,12 @@ public class TechdayMacro extends BaseMacro {
         }
     }
 
+    @SuppressWarnings("unused")
     public void setContentPropertyManager(ContentPropertyManager contentPropertyManager) {
         this.contentPropertyManager = contentPropertyManager;
     }
 
+    @SuppressWarnings("unused")
     public void setWikiStyleRenderer(WikiStyleRenderer wikiStyleRenderer) {
         this.wikiStyleRenderer = wikiStyleRenderer;
     }

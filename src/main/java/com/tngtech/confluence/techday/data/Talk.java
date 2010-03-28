@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 public class Talk {
+    @SuppressWarnings("unused")
     private static final Category log = Logger.getLogger(Talk.class);
 
     private String speaker;
@@ -34,10 +35,12 @@ public class Talk {
         this.userAccessor = userAccessor;
     }
 
+    @SuppressWarnings("unused")
     public boolean isInterested(String user) {
         return audience.contains(user);
     }
 
+    @SuppressWarnings("unused")
     public int getTotalAudience() {
         return audience.size();
     }
@@ -71,6 +74,7 @@ public class Talk {
         audience.remove(user);
     }
 
+    @SuppressWarnings("unused")
     public String getSpeaker() {
         return speaker;
     }
@@ -79,14 +83,17 @@ public class Talk {
         return idName;
     }
 
+    @SuppressWarnings("unused")
     public String getName() {
         return name;
     }
 
+    @SuppressWarnings("unused")
     public String getDescription() {
         return description;
     }
 
+    @SuppressWarnings("unused")
     public String getComment() {
         return comment;
     }
