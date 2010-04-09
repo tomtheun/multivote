@@ -4,9 +4,23 @@
         <version>${project.version}</version>
         <vendor name="TNG Technology Consulting GmbH" url="http://www.tngtech.com"/>
     </plugin-info>
+    
+    <resource type="i18n" name="i18n" location="AtlassianPlugin"/>
 
     <macro name='techday-plugin' class='${project.groupId}.TechdayMacro' key='techday-plugin'>
         <!-- TODO: Add macro description -->
         <!-- <description></description> -->
     </macro>
+
+    <rest key="rest-service-resources" path="/techday" version="0.1">
+        <description>Plugin to list techday talks and state interest in them</description>
+    </rest>
+
+    <web-resource name="Resources" key="resources">
+        <description>Provides the Javascript and CSS files</description>
+        <resource type="download" name="techday.js" location="techday.js"/>
+        <resource type="download" name="techday.css" location="css/techday.css">
+            <property key="content-type" value="text/css"/>
+        </resource>
+    </web-resource>
 </atlassian-plugin>

@@ -3,8 +3,8 @@ package com.tngtech.confluence.techday.data;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.user.User;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Category;
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Category;
+//import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,8 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 public class Talk {
-    @SuppressWarnings("unused")
-    private static final Category log = Logger.getLogger(Talk.class);
+    //private static final Category log = Logger.getLogger(Talk.class);
 
     private String speaker;
     private String idName;
@@ -22,7 +21,7 @@ public class Talk {
     private String comment;
     private TalkType type;
     private Set<String> audience = new HashSet<String>();
-    private UserAccessor userAccessor;
+    private UserAccessor userAccessor; // TODO this does not belong here
 
     public Talk(String idName, String name, String speaker, String description, String comment, TalkType type, UserAccessor userAccessor) {
         super();
@@ -32,6 +31,11 @@ public class Talk {
         this.comment = comment;
         this.description = description;
         this.type = type;
+        this.userAccessor = userAccessor;
+    }
+
+    public Talk(String idName, UserAccessor userAccessor) {
+        this.idName = idName;
         this.userAccessor = userAccessor;
     }
 
@@ -58,6 +62,10 @@ public class Talk {
     }
 
     public String getUsersAsString() {
+        return StringUtils.join(audience, ", ");
+    }
+
+    public String getUserFullNamesAsString() {
         List<String> fullNames = new ArrayList<String>();
 
         for (String userName: audience) {
@@ -66,12 +74,13 @@ public class Talk {
         return StringUtils.join(fullNames, ", ");
     }
 
-    public void addAudience(String user) {
-        audience.add(user);
+
+    public boolean addAudience(String user) {
+        return audience.add(user);
     }
 
-    public void removeAudience(String user) {
-        audience.remove(user);
+    public boolean removeAudience(String user) {
+        return audience.remove(user);
     }
 
     @SuppressWarnings("unused")
@@ -104,5 +113,9 @@ public class Talk {
 
     public Set<String> getAudience() {
         return audience;
+    }
+    
+    public void setAudience(Set<String> audience) {
+        this.audience = audience;
     }
 }

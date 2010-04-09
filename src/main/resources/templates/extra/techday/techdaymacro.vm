@@ -1,46 +1,53 @@
-#set ($renderer=$wikiStyleRenderer)
-
-<table class="grid">
-    <tr>
-           <th>Name</th>
-           <th>Vortragender</th>
-           <!-- th>Typ</th -->
-           <th>Beschreibung</th>
-           <th>Kommentar</th>
-           <!-- <th>Interessenten</th> -->
-           <th>Anzahl der Interessenten</th>
-           <th>Aktion</th>
-    </tr>
-    #set ($lastType="")
-    #foreach ($talk in $talks)
-        #if ($lastType != $talk.type)
-            #set ($lastType=$talk.type)
-            <tr>
-                <th colspan="8">
-                $lastType
-                </th>
-            </tr>
-        #end
+#set($renderer=$wikiStyleRenderer)
+#requireResource("confluence.web.resources:jquery")
+#requireResource("com.tngtech.confluence.techday.techday-plugin:resources")
+<fieldset class="hidden parameters">
+    <input type="hidden" id="TechdayPluginPageId" value="$content.getIdAsString()"/>
+    <input type="hidden" id="interestedLabel" value="$action.getText('com.tngtech.techday.interest.interested')"/>
+    <input type="hidden" id="notInterestedLabel" value="$action.getText('com.tngtech.techday.interest.notInterested')"/>
+</fieldset>
+#foreach( $talktype in $talks.keySet() )
+    $renderer.convertWikiToXHtml($content.toPageContext(), "h2. $talktype")
+    <table class="grid" id="$talktype">
+    <thead>
         <tr>
-            <td>$renderer.convertWikiToXHtml($content.toPageContext(), $talk.name)</td>
+            <th>$action.getText('com.tngtech.techday.talk.name')</th>
+            <th>$action.getText('com.tngtech.techday.talk.speaker')</th>
+            <!-- th>Typ</th -->
+            <!-- <th>Beschreibung</th>-->
+            <th>$action.getText('com.tngtech.techday.talk.comment')</th>
+            <th>$action.getText('com.tngtech.techday.talk.noOfAudience')</th>
+            <th>$action.getText('com.tngtech.techday.talk.interest')</th>
+        </tr>
+    </thead>
+    <tbody>
+    #foreach ( $talk in $talks.get($talktype) )
+        #set ($interested = $talk.isInterested($req.remoteUser))
+        #if ($interested)
+            #set ($classIntr = "interested")
+        #else
+            #set ($classIntr = "notInterested")
+        #end
+        <tr class=$classIntr>
+            <td title="$talk.description">$renderer.convertWikiToXHtml($content.toPageContext(), $talk.name)</td>
             <td>$renderer.convertWikiToXHtml($content.toPageContext(), $talk.speaker)</td>
-            <!-- td>$talk.type</td -->
-            <td>$renderer.convertWikiToXHtml($content.toPageContext(), $talk.description)</td>
+            <!--<td>$talk.type</td -->
+            <!--<td>$renderer.convertWikiToXHtml($content.toPageContext(), $talk.description)</td> -->
             <td>$renderer.convertWikiToXHtml($content.toPageContext(), $talk.comment)</td>
-            <!-- <td>$talk.usersAsString</td> -->
-            <td>$talk.totalAudience</td>
-            #set ($interested = $talk.isInterested($req.remoteUser))
+            <td id="audience.$generalUtil.urlEncode($talk.idName)" title="$talk.userFullNamesAsString">$talk.totalAudience</td>
             <td align="center">
                 #if ($interested)
-                    <a href="${req.contextPath}$generalUtil.customGetPageUrl($content)&techday.idname=$generalUtil.urlEncode($talk.idName)&techday.interested=no" title="$talk.usersAsString">
-                       Nicht mehr interessiert
-                    </a>
+                    <a id="techday.$generalUtil.urlEncode($talk.idName)" data-interest="false" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&techday.idname=$generalUtil.urlEncode($talk.idName)&techday.interested=false" >
+                        $action.getText('com.tngtech.techday.interest.notInterested')
+                   </a>
                 #else
-                    <a href="${req.contextPath}$generalUtil.customGetPageUrl($content)&techday.idname=$generalUtil.urlEncode($talk.idName)&techday.interested=yes" title="$talk.usersAsString">
-                       Interessiert
+                    <a id="techday.$generalUtil.urlEncode($talk.idName)" data-interest="true" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&techday.idname=$generalUtil.urlEncode($talk.idName)&techday.interested=true" >
+                       $action.getText('com.tngtech.techday.interest.interested')
                     </a>
                 #end
             </td>
         </tr>
     #end
-</table>
+    </tbody>
+    </table>
+#end
