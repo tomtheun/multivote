@@ -9,6 +9,7 @@ import com.atlassian.plugins.rest.common.security.AuthenticationContext;
 import com.atlassian.spring.container.ContainerManager;
 import com.tngtech.confluence.techday.data.Talk;
 import com.tngtech.confluence.techday.data.VoteResponse;
+import org.apache.log4j.Logger;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -18,6 +19,7 @@ import java.security.Principal;
 
 @Path("/vote")
 public class TechdayRestService {
+    private static final Logger log = Logger.getLogger(TechdayRestService.class);
     private PageManager pageManager;
     private ContentPropertyManager contentPropertyManager;
     private UserAccessor userAccessor;
@@ -52,6 +54,7 @@ public class TechdayRestService {
                          @Context AuthenticationContext authenticationContext) {
         String user = getUser(authenticationContext);
         if (user == null) {
+            log.error("Request from unauthenticated user");
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
