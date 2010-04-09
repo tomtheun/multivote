@@ -10,9 +10,13 @@
             var interested = (that.attr("data-interest") === "true");
             var audience = that.parent().parent().find("td[ id ^= 'audience']");
             var interestText = getInterestText(interested);
+            var contextPath = AJS.params.contextPath;
 
             // TODO use property for url
-            var url = "/confluence/rest/techday/0.1/vote/" + id
+            if (typeof(contextPath) == undefined) {
+                contextPath = "";
+            }
+            var url = contextPath + "/rest/techday/0.1/vote/" + id
                  + "?"
                  + $.param([{name: "talkId", value: talkId},
                      {name: "interested", value: interested}]);
