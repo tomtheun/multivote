@@ -28,26 +28,34 @@ public class TechDayService {
         this.contentPropertyManager = contentPropertyManager;
         this.userAccessor = userAccessor;
     }
-    
-    public TechDayService(UserAccessor userAccessor, ContentPropertyManager contentPropertyManager, ClusterManager clusterManager, ContentEntityObject contentObject) {
+
+    public TechDayService(UserAccessor userAccessor, ContentPropertyManager contentPropertyManager,
+            ClusterManager clusterManager, ContentEntityObject contentObject) {
         this(userAccessor, contentPropertyManager);
         this.clusterManager = clusterManager;
         this.contentObject = contentObject;
     }
 
-    public TechDayService(String body, UserAccessor userAccessor, ContentPropertyManager contentPropertyManager, ContentEntityObject contentObject) {
+    public TechDayService(String body, UserAccessor userAccessor, ContentPropertyManager contentPropertyManager,
+            ContentEntityObject contentObject, ClusterManager clusterManager) {
         this(userAccessor, contentPropertyManager);
+        this.clusterManager = clusterManager;
         this.contentObject = contentObject;
         this.talks = buildTalksFromBody(body);
     }
 
     /**
-     * This method parses the body of the macro.
-     * It assumes that the format is:
-     * <pre>idName|name|speaker|type|description|comment</pre>
-     * Where type is the text version of the {@link com.tngtech.confluence.techday.data.TalkType} values.
-     *
-     * @param body          of the Macro
+     * This method parses the body of the macro. It assumes that the format is:
+     * 
+     * <pre>
+     * idName | name | speaker | type | description | comment
+     * </pre>
+     * 
+     * Where type is the text version of the
+     * {@link com.tngtech.confluence.techday.data.TalkType} values.
+     * 
+     * @param body
+     *            of the Macro
      * @return list of {@link com.tngtech.confluence.techday.data.Talk}
      */
     private List<Talk> buildTalksFromBody(String body) {
@@ -58,8 +66,8 @@ public class TechDayService {
         String type;
         String description;
         String comment;
-        
-        //Reconstruct the users that have shown interest until now
+
+        // Reconstruct the users that have shown interest until now
         for (StringTokenizer stringTokenizer = new StringTokenizer(body, "\r\n"); stringTokenizer.hasMoreTokens();) {
             String line = stringTokenizer.nextToken().trim();
             if (TextUtils.stringSet(line)) {
@@ -72,7 +80,8 @@ public class TechDayService {
                     type = lineTokenizer.nextToken().trim();
                     description = lineTokenizer.nextToken().trim();
                     comment = lineTokenizer.nextToken().trim();
-                    Talk talk = new Talk(idName, name, speaker, description, comment, TalkType.valueOf(type), userAccessor);
+                    Talk talk = new Talk(idName, name, speaker, description, comment, TalkType.valueOf(type),
+                            userAccessor);
                     talk.setAudience(getAudience(idName));
                     talks.add(talk);
                 }
@@ -82,8 +91,7 @@ public class TechDayService {
         return talks;
     }
 
-    void recordInterest(String remoteUser, String requestTalk,
-                        Boolean requestUse) {
+    void recordInterest(String remoteUser, String requestTalk, Boolean requestUse) {
         Boolean changed;
         String id;
         for (Talk talk : talks) {
@@ -91,7 +99,7 @@ public class TechDayService {
                 id = talk.getIdName();
 
                 ClusteredLock lock = null;
-                lock = clusterManager.getClusteredLock("techday.talk.lock."+id);
+                lock = clusterManager.getClusteredLock("techday.talk.lock." + id);
                 try {
                     lock.lock();
 
@@ -115,10 +123,12 @@ public class TechDayService {
         }
     }
 
-    Set<String> getAudience (String idName) {
+    Set<String> getAudience(String idName) {
         String usersAsString = contentPropertyManager.getTextProperty(contentObject, buildPropertyString(idName));
         Set<String> users = new HashSet<String>();
-        if (usersAsString == null) usersAsString = "";
+        if (usersAsString == null) {
+            usersAsString = "";
+        }
         StringTokenizer userTokenizer = new StringTokenizer(usersAsString, ",");
         while (userTokenizer.hasMoreTokens()) {
             users.add(userTokenizer.nextToken().trim());
@@ -135,8 +145,10 @@ public class TechDayService {
             public int compare(Talk o1, Talk o2) {
                 int audience2 = o2.getAudience().size();
                 int audience1 = o1.getAudience().size();
-                if (audience1 < audience2) return 1;
-                if (audience1 == audience2) return 0;
+                if (audience1 < audience2)
+                    return 1;
+                if (audience1 == audience2)
+                    return 0;
                 return -1;
             }
         });
@@ -161,7 +173,7 @@ public class TechDayService {
     public Map<TalkType, List<Talk>> getTalksByType() {
         // TreeMap implements SortedMap
         Map<TalkType, List<Talk>> result = new TreeMap<TalkType, List<Talk>>();
-        for (Talk talk: talks) {
+        for (Talk talk : talks) {
             if (result.containsKey(talk.getType())) {
                 result.get(talk.getType()).add(talk);
             } else {
@@ -174,6 +186,6 @@ public class TechDayService {
         for (Map.Entry<TalkType, List<Talk>> entry : result.entrySet()) {
             sortTalks(entry.getValue());
         }
-        return result;  //To change body of created methods use File | Settings | File Templates.
+        return result;
     }
 }

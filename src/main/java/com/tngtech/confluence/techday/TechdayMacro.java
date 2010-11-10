@@ -1,5 +1,6 @@
 package com.tngtech.confluence.techday;
 
+import com.atlassian.confluence.cluster.ClusterManager;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.core.ContentPropertyManager;
 import com.atlassian.confluence.renderer.PageContext;
@@ -30,6 +31,12 @@ public class TechdayMacro extends BaseMacro {
     protected WikiStyleRenderer wikiStyleRenderer;
     private UserAccessor userAccessor;
 
+    private ClusterManager clusterManager;
+
+    public void setClusterManager(ClusterManager clusterManager) {
+        this.clusterManager = clusterManager;
+    }    
+    
     @SuppressWarnings("deprecation")
     public boolean isInline() {
         return false;
@@ -52,7 +59,7 @@ public class TechdayMacro extends BaseMacro {
      */
     public String execute(Map params, String body, RenderContext renderContext) throws MacroException {
         ContentEntityObject contentObject = ((PageContext)renderContext).getEntity();
-        TechDayService techDayService = new TechDayService(body, userAccessor, contentPropertyManager, contentObject);
+        TechDayService techDayService = new TechDayService(body, userAccessor, contentPropertyManager, contentObject, clusterManager);
 
         HttpServletRequest request = ServletActionContext.getRequest();
         if (request != null) {
