@@ -1,5 +1,11 @@
 package it.com.tngtech.confluence.techday;
 
+import java.util.ArrayList;
+
+import net.sourceforge.jwebunit.html.Cell;
+import net.sourceforge.jwebunit.html.Row;
+import net.sourceforge.jwebunit.html.Table;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.atlassian.confluence.plugin.functest.AbstractConfluencePluginWebTestCase;
@@ -11,8 +17,11 @@ import com.atlassian.confluence.plugin.functest.helper.SpaceHelper;
  */
 public class TestTechdayMacro extends AbstractConfluencePluginWebTestCase {
 	private long idOfPageContainingChartMacro;
+    private final static String MACROSTRING = "{techday-plugin}";
+    private final static String TALK_ID = "1000";
 
 	protected void setUp() throws Exception {
+
 		final SpaceHelper spaceHelper;
 		final PageHelper pageHelper;
 
@@ -41,22 +50,32 @@ public class TestTechdayMacro extends AbstractConfluencePluginWebTestCase {
 	}
 
 	// test this
-	public void testCreateTechDayTable() {
+	public void testCreateTechDayTable() { // TODO name
 		final PageHelper pageHelper = getPageHelper(idOfPageContainingChartMacro);
 
-		System.out.println("bla");
 		assertTrue(pageHelper.read());
-
-		pageHelper.setContent( // TODO
-				"| 201010141350 | Konferenzbericht Qt- Developer Days 2010 | [~pintarer] | TALK | | 1 Woche Vorlauf |"
-					//	+ "| 201010221000 | Einführung und Praxisbericht über Apache Maven | [~winklerg] | TALK | | 1 Woche Vorlauf |"
-					//	+ "| 201010271500 | Erzeugen von Sprint- und Task-Zetteln aus Freemind | [~liebharc] | POINTER | Pointer | 1 Wochen"
-				);
+		
+		pageHelper.setContent(MACROSTRING + 
+				"\n| "+ TALK_ID +" | Name | Autor | TALK | | Anmerkung |\n"
+				+ MACROSTRING);
 
 		assertTrue(pageHelper.update());
 
 		gotoPage("/pages/viewpage.action?pageId=" + pageHelper.getId());
-		//pageHelper.
-
+		
+		String interested = getElementAttributByXPath("//td[@id='audience."+TALK_ID+"']", "title");
+        
+		assertEquals("", interested);
+		clickLink("techday."+TALK_ID);
+	    assertTrue(pageHelper.update());
+	    interested = getElementAttributByXPath("//td[@id='audience."+TALK_ID+"']", "title");
+		assertEquals("admin", interested);
 	}
+	
+	// TODO user full name. "admin" is just the login name
+	// number of interested users
+	// change type of line (coloring)
+	
+    //  + "| 201010221000 | Einführung und Praxisbericht über Apache Maven | [~winklerg] | TALK | | 1 Woche Vorlauf |"
+    //  + "| 201010271500 | Erzeugen von Sprint- und Task-Zetteln aus Freemind | [~liebharc] | POINTER | Pointer | 1 Wochen"
 }
