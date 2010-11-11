@@ -1,26 +1,37 @@
-<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+<atlassian-plugin key="${project.groupId}.${project.artifactId}"
+    name="${project.name}" plugins-version="2">
     <plugin-info>
         <description>${project.description}</description>
         <version>${project.version}</version>
-        <vendor name="TNG Technology Consulting GmbH" url="http://www.tngtech.com"/>
+        <vendor name="TNG Technology Consulting GmbH" url="http://www.tngtech.com" />
     </plugin-info>
-    
-    <resource type="i18n" name="i18n" location="AtlassianPlugin"/>
 
-    <macro name='techday-plugin' class='${project.groupId}.TechdayMacro' key='techday-plugin'>
+    <resource type="i18n" name="i18n" location="AtlassianPlugin" />
+
+    <macro name='techday-plugin' class='${project.groupId}.TechdayMacro'
+        key='techday-plugin'>
         <!-- TODO: Add macro description -->
         <!-- <description></description> -->
     </macro>
 
     <rest key="rest-service-resources" path="/techday" version="0.1">
-        <description>Plugin to list techday talks and state interest in them</description>
+        <description>Plugin to list techday talks and state interest in
+            them</description>
     </rest>
 
     <web-resource name="Resources" key="resources">
         <description>Provides the Javascript and CSS files</description>
-        <resource type="download" name="techday.js" location="techday.js"/>
+        <resource type="download" name="techday.js" location="techday.js" />
         <resource type="download" name="techday.css" location="css/techday.css">
-            <property key="content-type" value="text/css"/>
+            <property key="content-type" value="text/css" />
+        </resource>
+        <resource name="checkbox_checked.png" type="download"
+            location="templates/extra/images/checkbox_checked.png">
+            <property key="content-type" value="image/png" />
+        </resource>
+        <resource name="checkbox_unchecked.png" type="download"
+            location="templates/extra/images/checkbox_unchecked.png">
+            <property key="content-type" value="image/png" />
         </resource>
     </web-resource>
 </atlassian-plugin>

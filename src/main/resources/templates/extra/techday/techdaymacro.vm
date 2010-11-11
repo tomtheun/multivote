@@ -1,10 +1,11 @@
 #set($renderer=$wikiStyleRenderer)
+#set($resPath="download/resources/com.tngtech.confluence.techday.techday-plugin:resources")
 #requireResource("confluence.web.resources:jquery")
 #requireResource("com.tngtech.confluence.techday.techday-plugin:resources")
 <fieldset class="hidden parameters">
     <input type="hidden" id="TechdayPluginPageId" value="$content.getIdAsString()"/>
-    <input type="hidden" id="interestedLabel" value="$action.getText('com.tngtech.techday.interest.interested')"/>
-    <input type="hidden" id="notInterestedLabel" value="$action.getText('com.tngtech.techday.interest.notInterested')"/>
+    <input type="hidden" id="notInterestedImage" value="$req.contextPath/$resPath/checkbox_unchecked.png" />
+    <input type="hidden" id="interestedImage" value="$req.contextPath/$resPath/checkbox_checked.png" />
 </fieldset>
 #foreach( $talktype in $talks.keySet() )
     $renderer.convertWikiToXHtml($content.toPageContext(), "h2. $talktype")
@@ -38,11 +39,13 @@
             <td align="center">
                 #if ($interested)
                     <a id="techday.$generalUtil.urlEncode($talk.idName)" data-interest="false" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&techday.idname=$generalUtil.urlEncode($talk.idName)&techday.interested=false" >
-                        $action.getText('com.tngtech.techday.interest.notInterested')
+                       <img src="$req.contextPath/$resPath/checkbox_checked.png" border=0 align="absmiddle">
+                        <!-- $action.getText('com.tngtech.techday.interest.notInterested')  -->
                    </a>
                 #else
                     <a id="techday.$generalUtil.urlEncode($talk.idName)" data-interest="true" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&techday.idname=$generalUtil.urlEncode($talk.idName)&techday.interested=true" >
-                       $action.getText('com.tngtech.techday.interest.interested')
+                      <img src="$req.contextPath/$resPath/checkbox_unchecked.png" border=0 align="absmiddle">
+                      <!-- $action.getText('com.tngtech.techday.interest.interested')  -->
                     </a>
                 #end
             </td>
