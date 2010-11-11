@@ -6,6 +6,7 @@
     <input type="hidden" id="TechdayPluginPageId" value="$content.getIdAsString()"/>
     <input type="hidden" id="notInterestedImage" value="$req.contextPath/$resPath/checkbox_unchecked.png" />
     <input type="hidden" id="interestedImage" value="$req.contextPath/$resPath/checkbox_checked.png" />
+    <input type="hidden" id="progressImage" value="$req.contextPath/$resPath/roller.gif" />
 </fieldset>
 #foreach( $talktype in $talks.keySet() )
     $renderer.convertWikiToXHtml($content.toPageContext(), "h2. $talktype")

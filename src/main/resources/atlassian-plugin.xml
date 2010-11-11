@@ -33,5 +33,9 @@
             location="templates/extra/images/checkbox_unchecked.png">
             <property key="content-type" value="image/png" />
         </resource>
+        <resource name="roller.gif" type="download"
+            location="templates/extra/images/roller.gif">
+            <property key="content-type" value="image/gif" />
+        </resource>
     </web-resource>
 </atlassian-plugin>
