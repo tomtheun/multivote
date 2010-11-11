@@ -9,7 +9,7 @@
             var talkId = that.attr("id").replace(/[^0-9]/g,"");
             var interested = (that.attr("data-interest") === "true");
             var audience = that.parent().parent().find("td[ id ^= 'audience']");
-            var interestImage = getInterestImage(interested);
+
             var contextPath = AJS.params.contextPath;
             var img = that.find("img")
 
@@ -23,20 +23,23 @@
                      {name: "interested", value: interested}]);
 
             $.ajax({type: "POST", dataType: "json", url: url, data: "",
-            beforeSend: function(data) {
+            timeout: 10000,
+            beforeSend: function() {
             	img.attr("src", AJS.params.progressImage)
             },
+            error: function() {
+            	img.attr("src", getInterestImage(!interested));
+            },
             success: function(data) {
-            	//window.setTimeout(function () {
                 that.attr("data-interest", !interested);
-                img.attr("src", interestImage)
+                img.attr("src", getInterestImage(interested));
                 audience.text(data.userNo);
                 audience.attr("title", data.users);
                 if (interested) {
-                    that.parent().parent().attr("class", "interested")
+                    that.parent().parent().attr("class", "interested");
                 } else {
-                    that.parent().parent().attr("class", "notInterested")
-                }//}, 500);
+                    that.parent().parent().attr("class", "notInterested");
+                }
             }});
 
             return false;
