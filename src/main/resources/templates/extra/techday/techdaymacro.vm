@@ -40,13 +40,11 @@
             <td align="center">
                 #if ($interested)
                     <a id="techday.$generalUtil.urlEncode($talk.idName)" data-interest="false" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&techday.idname=$generalUtil.urlEncode($talk.idName)&techday.interested=false" >
-                       <img src="$req.contextPath/$resPath/checkbox_checked.png" border=0 align="absmiddle">
-                        <!-- $action.getText('com.tngtech.techday.interest.notInterested')  -->
+                       <img src="$req.contextPath/$resPath/checkbox_checked.png" width=20 border=0 align="absmiddle">
                    </a>
                 #else
                     <a id="techday.$generalUtil.urlEncode($talk.idName)" data-interest="true" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&techday.idname=$generalUtil.urlEncode($talk.idName)&techday.interested=true" >
-                      <img src="$req.contextPath/$resPath/checkbox_unchecked.png" border=0 align="absmiddle">
-                      <!-- $action.getText('com.tngtech.techday.interest.interested')  -->
+                      <img src="$req.contextPath/$resPath/checkbox_unchecked.png" width=20 border=0 align="absmiddle">
                     </a>
                 #end
             </td>
