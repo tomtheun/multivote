@@ -13,10 +13,11 @@
             var contextPath = AJS.params.contextPath;
             var img = that.find("img")
 
-            // TODO use property for url
             if (typeof(contextPath) == undefined) {
                 contextPath = "";
             }
+            
+            // TODO use property for url
             var url = contextPath + "/rest/techday/0.1/vote/" + id
                  + "?"
                  + $.param([{name: "talkId", value: talkId},
