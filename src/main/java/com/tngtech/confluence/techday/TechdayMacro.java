@@ -37,7 +37,6 @@ public class TechdayMacro extends BaseMacro {
         this.clusterManager = clusterManager;
     }    
     
-    @SuppressWarnings("deprecation")
     public boolean isInline() {
         return false;
     }
@@ -57,6 +56,7 @@ public class TechdayMacro extends BaseMacro {
     /**
      * This method returns XHTML to be displayed on the final page.
      */
+    @SuppressWarnings("rawtypes")
     public String execute(Map params, String body, RenderContext renderContext) throws MacroException {
         ContentEntityObject contentObject = ((PageContext)renderContext).getEntity();
         TechDayService techDayService = new TechDayService(body, userAccessor, contentPropertyManager, contentObject, clusterManager);
@@ -85,12 +85,10 @@ public class TechdayMacro extends BaseMacro {
         }
     }
 
-    @SuppressWarnings("unused")
     public void setContentPropertyManager(ContentPropertyManager contentPropertyManager) {
         this.contentPropertyManager = contentPropertyManager;
     }
 
-    @SuppressWarnings("unused")
     public void setWikiStyleRenderer(WikiStyleRenderer wikiStyleRenderer) {
         this.wikiStyleRenderer = wikiStyleRenderer;
     }

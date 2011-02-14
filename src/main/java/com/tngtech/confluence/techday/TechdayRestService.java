@@ -35,12 +35,10 @@ public class TechdayRestService {
     }
 
 
-    @SuppressWarnings("unused")
     public void setPageManager(PageManager pageManager) {
         this.pageManager = pageManager;
     }
 
-    @SuppressWarnings("unused")
     public void setContentPropertyManager(ContentPropertyManager contentPropertyManager) {
         this.contentPropertyManager = contentPropertyManager;
     }
