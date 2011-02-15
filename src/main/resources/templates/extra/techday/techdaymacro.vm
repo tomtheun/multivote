@@ -15,8 +15,7 @@
         <tr>
             <th>$action.getText('com.tngtech.techday.talk.name')</th>
             <th>$action.getText('com.tngtech.techday.talk.speaker')</th>
-            <!-- th>Typ</th -->
-            <!-- <th>Beschreibung</th>-->
+            <th>$action.getText('com.tngtech.techday.talk.description')</th>
             <th>$action.getText('com.tngtech.techday.talk.comment')</th>
             <th>$action.getText('com.tngtech.techday.talk.noOfAudience')</th>
             <th>$action.getText('com.tngtech.techday.talk.interest')</th>
@@ -33,8 +32,7 @@
         <tr class=$classIntr>
             <td title="$talk.description">$renderer.convertWikiToXHtml($content.toPageContext(), $talk.name)</td>
             <td>$renderer.convertWikiToXHtml($content.toPageContext(), $talk.speaker)</td>
-            <!--<td>$talk.type</td -->
-            <!--<td>$renderer.convertWikiToXHtml($content.toPageContext(), $talk.description)</td> -->
+            <td>$renderer.convertWikiToXHtml($content.toPageContext(), $talk.description)</td>
             <td>$renderer.convertWikiToXHtml($content.toPageContext(), $talk.comment)</td>
             <td id="audience.$generalUtil.urlEncode($talk.idName)" title="$talk.userFullNamesAsString">$talk.totalAudience</td>
             <td align="center">
