@@ -18,7 +18,6 @@ public class TestStaticLinks extends BaseIntegration
         super.tearDown();
     }
     
-    @Override
     public void testVotingChangesAudience() {
         assertEquals("", getAudience());
         clickLink(LINK_ID);

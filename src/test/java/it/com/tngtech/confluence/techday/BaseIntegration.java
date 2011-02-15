@@ -12,7 +12,7 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
     protected static final String TALK_ID = "1000";
     protected static final String LINK_ID = "techday." + TALK_ID;
     protected static final String XPATH_LINE_CLASS = "//div[@class='wiki-content']/table/tbody/tr";
-    private static final String AUDIENCE_XPATH = "//td[@id='audience." + TALK_ID + "']";
+    protected static final String AUDIENCE_XPATH = "//td[@id='audience." + TALK_ID + "']";
 
     protected void setUp() throws Exception {
         final SpaceHelper spaceHelper;
@@ -22,8 +22,10 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
     
         spaceHelper = getSpaceHelper();
         spaceHelper.setKey("TST");
+        spaceHelper.delete(); // if it fails, we're fine
+        
         spaceHelper.setName("Test Space");
-        spaceHelper.setDescription("Test Space For Chart Macro");
+        spaceHelper.setDescription("Test Space For TechDay Macro");
     
         assertTrue(spaceHelper.create());
     
@@ -72,9 +74,4 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
     protected String getAudience() {
         return getElementAttributeByXPath(AUDIENCE_XPATH, "title");
     }
-
-    public void testVotingChangesAudience() {
-        // TODO Auto-generated method stub
-    }
-
 }
