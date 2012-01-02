@@ -1,32 +1,30 @@
 ;(function($) {
-
     $(function () {
-        var id = AJS.params.TechdayPluginPageId;
-
-        var interestedLink =  $("a[ id ^= 'techday']");
-        interestedLink.click( function(event){
-            var that = $(this);
-            var talkId = that.attr("id").replace(/[^0-9]/g,"");
-            var interested = (that.attr("data-interest") === "true");
-            var audience = that.parent().parent().find("td[ id ^= 'audience']");
-
-            var contextPath = AJS.params.contextPath;
-            var img = that.find("img")
+        var id = AJS.params.TechdayPluginPageId,
+            interestedLink =  $("a[ id ^= 'techday']");
+        
+        interestedLink.click( function(event) {
+            var that = $(this),
+            	talkId = that.attr("id").replace(/[^0-9]/g,""), 
+            	interested = (that.attr("data-interest") === "true"),
+            	audience = that.parent().parent().find("td[ id ^= 'audience']"),
+            	contextPath = AJS.params.contextPath,
+            	img = that.find("img");
 
             if (typeof(contextPath) == undefined) {
                 contextPath = "";
             }
             
             // TODO use property for url
-            var url = contextPath + "/rest/techday/0.1/vote/" + id
-                 + "?"
-                 + $.param([{name: "talkId", value: talkId},
+            var url = contextPath + "/rest/techday/0.1/vote/" + id +
+            "?" +
+            $.param([{name: "talkId", value: talkId},
                      {name: "interested", value: interested}]);
 
             $.ajax({type: "POST", dataType: "json", url: url, data: "",
             timeout: 10000,
             beforeSend: function() {
-            	img.attr("src", AJS.params.progressImage)
+            	img.attr("src", AJS.params.progressImage);
             },
             error: function() {
             	img.attr("src", getInterestImage(!interested));
@@ -52,7 +50,6 @@
             } else {
             	return AJS.params.notInterestedImage;
             }
-        }
-    })
-
+        };
+    });
 })(jQuery);
