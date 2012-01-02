@@ -21,6 +21,7 @@
             <th>$action.getText('com.tngtech.techday.talk.interest')</th>
         </tr>
     </thead>
+
     <tbody>
     #foreach ( $talk in $talks.get($talktype) )
         #set ($interested = $talk.isInterested($req.remoteUser))
@@ -30,10 +31,10 @@
             #set ($classIntr = "notInterested")
         #end
         <tr class=$classIntr>
-            <td title="$talk.description">$renderer.convertWikiToXHtml($content.toPageContext(), $talk.name)</td>
-            <td>$renderer.convertWikiToXHtml($content.toPageContext(), $talk.speaker)</td>
-            <td>$renderer.convertWikiToXHtml($content.toPageContext(), $talk.description)</td>
-            <td>$renderer.convertWikiToXHtml($content.toPageContext(), $talk.comment)</td>
+            <td title="$talk.description">$talk.name</td>
+            <td>$talk.speaker</td>
+            <td>$talk.description</td>
+            <td>$talk.comment</td>
             <td id="audience.$generalUtil.urlEncode($talk.idName)" title="$talk.userFullNamesAsString">$talk.totalAudience</td>
             <td align="center">
                 #if ($interested)

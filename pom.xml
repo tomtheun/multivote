@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.tngtech.confluence.techday</groupId>
     <artifactId>techday-plugin</artifactId>
-    <version>0.0.7</version>
+    <version>0.0.8</version>
 
     <organization>
         <name>TNG Technology Consulting</name>
@@ -59,6 +59,18 @@
             <scope>provided</scope>
         </dependency>
         <!-- rest -->
+        <dependency>
+            <groupId>org.jodd</groupId>
+            <artifactId>jodd-wot</artifactId>
+            <version>3.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.5.8</version>
+            <!-- this is needed because of classloader issues -->
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>jsr311-api</artifactId>
@@ -131,16 +143,17 @@
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
                 <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
+                    <source>1.6</source>
+                    <target>1.6</target>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
     <properties>
-        <confluence.version>3.4.1</confluence.version>
+        <confluence.version>3.5.7</confluence.version>
         <confluence.data.version>3.1</confluence.data.version>
         <downloadSources>true</downloadSources>
         <downloadJavadocs>true</downloadJavadocs>

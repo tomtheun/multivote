@@ -16,10 +16,14 @@ import com.atlassian.spring.container.ContainerManager;
 import com.opensymphony.webwork.ServletActionContext;
 import com.tngtech.confluence.techday.data.Talk;
 import com.tngtech.confluence.techday.data.TalkType;
+import static jodd.lagarto.dom.jerry.Jerry.jerry;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.List;
 import java.util.Map;
+
+import jodd.lagarto.dom.jerry.Jerry;
 
 /**
  * This class provides the simple functionality of the techday planning plugin.
@@ -27,7 +31,7 @@ import java.util.Map;
 public class TechdayMacro extends BaseMacro {
     //private static final Category log = Logger.getLogger(TechdayMacro.class);
     protected ContentPropertyManager contentPropertyManager;
-    
+
     protected WikiStyleRenderer wikiStyleRenderer;
     private UserAccessor userAccessor;
 
@@ -35,8 +39,8 @@ public class TechdayMacro extends BaseMacro {
 
     public void setClusterManager(ClusterManager clusterManager) {
         this.clusterManager = clusterManager;
-    }    
-    
+    }
+
     public boolean isInline() {
         return false;
     }
@@ -57,9 +61,12 @@ public class TechdayMacro extends BaseMacro {
      * This method returns XHTML to be displayed on the final page.
      */
     @SuppressWarnings("rawtypes")
+    @Override
     public String execute(Map params, String body, RenderContext renderContext) throws MacroException {
         ContentEntityObject contentObject = ((PageContext)renderContext).getEntity();
-        TechDayService techDayService = new TechDayService(body, userAccessor, contentPropertyManager, contentObject, clusterManager);
+
+        String table = wikiStyleRenderer.convertWikiToXHtml(renderContext, body);
+        TechDayService techDayService = new TechDayService(table, userAccessor, contentPropertyManager, contentObject, clusterManager);
 
         HttpServletRequest request = ServletActionContext.getRequest();
         if (request != null) {
@@ -68,9 +75,8 @@ public class TechdayMacro extends BaseMacro {
             String requestUse = request.getParameter("techday.interested");
             techDayService.recordInterest(remoteUser, requestTalk, Boolean.parseBoolean(requestUse));
         }
-        
+
         techDayService.sortTalks();
-        //List<Talk> talks = techDayService.getTalks();
         Map<TalkType, List<Talk>> talks = techDayService.getTalksByType();
 
         Map<String, Object> contextMap = MacroUtils.defaultVelocityContext();

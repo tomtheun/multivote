@@ -1,17 +1,31 @@
 package com.tngtech.confluence.techday;
 
+import static jodd.lagarto.dom.jerry.Jerry.jerry;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
+
+import jodd.lagarto.dom.jerry.Jerry;
+import jodd.lagarto.dom.jerry.JerryFunction;
+
+import org.apache.commons.lang.StringUtils;
+
 import com.atlassian.confluence.cluster.ClusterManager;
 import com.atlassian.confluence.cluster.ClusteredLock;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.core.ContentPropertyManager;
 import com.atlassian.confluence.user.UserAccessor;
-import com.opensymphony.util.TextUtils;
 import com.tngtech.confluence.techday.data.Talk;
 import com.tngtech.confluence.techday.data.TalkType;
-import org.apache.commons.lang.StringUtils;
 
-import java.util.*;
-
+// TODO convert to a proper service, inject..
 public class TechDayService {
     protected ContentPropertyManager contentPropertyManager;
     protected ContentEntityObject contentObject;
@@ -46,48 +60,39 @@ public class TechDayService {
 
     /**
      * This method parses the body of the macro. It assumes that the format is:
-     * 
+     *
      * <pre>
      * idName | name | speaker | type | description | comment
      * </pre>
-     * 
+     *
      * Where type is the text version of the
      * {@link com.tngtech.confluence.techday.data.TalkType} values.
-     * 
+     *
      * @param body
      *            of the Macro
      * @return list of {@link com.tngtech.confluence.techday.data.Talk}
      */
     private List<Talk> buildTalksFromBody(String body) {
+        Jerry xhtml = jerry(body);
+        Jerry lines = xhtml.$("table").find("tr");
 
-        String idName;
-        String name;
-        String speaker;
-        String type;
-        String description;
-        String comment;
-
-        // Reconstruct the users that have shown interest until now
-        for (StringTokenizer stringTokenizer = new StringTokenizer(body, "\r\n"); stringTokenizer.hasMoreTokens();) {
-            String line = stringTokenizer.nextToken().trim();
-            if (TextUtils.stringSet(line)) {
-                StringTokenizer lineTokenizer = new StringTokenizer(line, "|");
-                int numberOfTokens = lineTokenizer.countTokens();
-                if (numberOfTokens == 6) {
-                    idName = lineTokenizer.nextToken().trim();
-                    name = lineTokenizer.nextToken().trim();
-                    speaker = lineTokenizer.nextToken().trim();
-                    type = lineTokenizer.nextToken().trim();
-                    description = lineTokenizer.nextToken().trim();
-                    comment = lineTokenizer.nextToken().trim();
-                    Talk talk = new Talk(idName, name, speaker, description, comment, TalkType.valueOf(type),
-                            userAccessor);
-                    talk.setAudience(getAudience(idName));
-                    talks.add(talk);
-                }
+        lines.each(new JerryFunction() {
+            @Override
+            public boolean onNode(Jerry $this, int index) {
+                Jerry children = $this.children();
+                String idName = children.get(0).getTextContent().trim();
+                String name = children.get(1).getInnerHtml().trim();
+                String speaker = children.get(2).getInnerHtml().trim();
+                String type = children.get(3).getInnerHtml().trim();
+                String description = children.get(4).getInnerHtml().trim();
+                String comment = children.get(5).getInnerHtml().trim();
+                Talk talk = new Talk(idName, name, speaker, description, comment, TalkType.valueOf(type),
+                        userAccessor);
+                talk.setAudience(getAudience(idName));
+                talks.add(talk);
+                return true;
             }
-        }
-
+        });
         return talks;
     }
 
