@@ -7,7 +7,7 @@ import com.atlassian.confluence.plugin.functest.helper.PageHelper;
 import com.atlassian.confluence.plugin.functest.helper.SpaceHelper;
 
 public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCase {
-    private long idOfPageContainingChartMacro;
+    private long idOfPageContainingMacro;
     private static final String MACROSTRING = "{techday-plugin}";
     protected static final String TALK_ID = "1000";
     protected static final String LINK_ID = "techday." + TALK_ID;
@@ -36,7 +36,7 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
     
         assertTrue(pageHelper.create());
     
-        idOfPageContainingChartMacro = pageHelper.getId();
+        idOfPageContainingMacro = pageHelper.getId();
     }
 
     protected void tearDown() throws Exception {
@@ -45,7 +45,7 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
     }
 
     public PageHelper createTechDayTable() {
-        final PageHelper pageHelper = getPageHelper(idOfPageContainingChartMacro);
+        final PageHelper pageHelper = getPageHelper(idOfPageContainingMacro);
     
         assertTrue(pageHelper.read());
     
