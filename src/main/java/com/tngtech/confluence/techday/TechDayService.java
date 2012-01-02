@@ -38,23 +38,17 @@ public class TechDayService {
 
     private List<Talk> talks = new ArrayList<Talk>();
 
-    public TechDayService(UserAccessor userAccessor, ContentPropertyManager contentPropertyManager) {
-        this.contentPropertyManager = contentPropertyManager;
-        this.userAccessor = userAccessor;
-    }
-
     public TechDayService(UserAccessor userAccessor, ContentPropertyManager contentPropertyManager,
             ClusterManager clusterManager, ContentEntityObject contentObject) {
-        this(userAccessor, contentPropertyManager);
+        this.contentPropertyManager = contentPropertyManager;
+        this.userAccessor = userAccessor;
         this.clusterManager = clusterManager;
         this.contentObject = contentObject;
     }
 
     public TechDayService(String body, UserAccessor userAccessor, ContentPropertyManager contentPropertyManager,
             ContentEntityObject contentObject, ClusterManager clusterManager) {
-        this(userAccessor, contentPropertyManager);
-        this.clusterManager = clusterManager;
-        this.contentObject = contentObject;
+        this(userAccessor, contentPropertyManager, clusterManager, contentObject);
         this.talks = buildTalksFromBody(body);
     }
 
@@ -179,13 +173,10 @@ public class TechDayService {
         // TreeMap implements SortedMap
         Map<TalkType, List<Talk>> result = new TreeMap<TalkType, List<Talk>>();
         for (Talk talk : talks) {
-            if (result.containsKey(talk.getType())) {
-                result.get(talk.getType()).add(talk);
-            } else {
-                List<Talk> list = new ArrayList<Talk>();
-                list.add(talk);
-                result.put(talk.getType(), list);
+            if (!result.containsKey(talk.getType())) {
+                result.put(talk.getType(), new ArrayList<Talk>());
             }
+            result.get(talk.getType()).add(talk);
         }
 
         for (Map.Entry<TalkType, List<Talk>> entry : result.entrySet()) {

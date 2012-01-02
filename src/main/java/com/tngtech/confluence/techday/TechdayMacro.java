@@ -1,5 +1,10 @@
 package com.tngtech.confluence.techday;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.atlassian.confluence.cluster.ClusterManager;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.core.ContentPropertyManager;
@@ -16,14 +21,6 @@ import com.atlassian.spring.container.ContainerManager;
 import com.opensymphony.webwork.ServletActionContext;
 import com.tngtech.confluence.techday.data.Talk;
 import com.tngtech.confluence.techday.data.TalkType;
-import static jodd.lagarto.dom.jerry.Jerry.jerry;
-
-import javax.servlet.http.HttpServletRequest;
-
-import java.util.List;
-import java.util.Map;
-
-import jodd.lagarto.dom.jerry.Jerry;
 
 /**
  * This class provides the simple functionality of the techday planning plugin.
@@ -76,7 +73,6 @@ public class TechdayMacro extends BaseMacro {
             techDayService.recordInterest(remoteUser, requestTalk, Boolean.parseBoolean(requestUse));
         }
 
-        techDayService.sortTalks();
         Map<TalkType, List<Talk>> talks = techDayService.getTalksByType();
 
         Map<String, Object> contextMap = MacroUtils.defaultVelocityContext();
