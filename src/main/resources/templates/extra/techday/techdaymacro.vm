@@ -31,7 +31,7 @@
             #set ($classIntr = "notInterested")
         #end
         <tr class=$classIntr>
-            <td title="$talk.description">$talk.name</td>
+            <td>$talk.name</td>
             <td>$talk.speaker</td>
             <td>$talk.description</td>
             <td>$talk.comment</td>
