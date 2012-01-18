@@ -23,17 +23,15 @@ public class TechdayRestService {
     private PageManager pageManager;
     private ContentPropertyManager contentPropertyManager;
     private UserAccessor userAccessor;
+    private ClusterManager clusterManager;
 
     public TechdayRestService () {
         this.userAccessor = (UserAccessor) ContainerManager.getInstance().getContainerContext().getComponent("userAccessor");
     }
     
-    private ClusterManager clusterManager;
-
     public void setClusterManager(ClusterManager clusterManager) {
         this.clusterManager = clusterManager;
     }
-
 
     public void setPageManager(PageManager pageManager) {
         this.pageManager = pageManager;
