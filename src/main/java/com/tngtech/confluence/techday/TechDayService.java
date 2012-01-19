@@ -4,7 +4,6 @@ import static jodd.lagarto.dom.jerry.Jerry.jerry;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +25,7 @@ import com.tngtech.confluence.techday.data.Talk;
 import com.tngtech.confluence.techday.data.TalkType;
 
 // TODO convert to a proper service, inject..
+// TODO check for duplicate IDs in talks
 public class TechDayService {
     protected ContentPropertyManager contentPropertyManager;
     protected ContentEntityObject contentObject;
@@ -46,17 +46,17 @@ public class TechDayService {
         this.contentObject = contentObject;
     }
 
-    public TechDayService(String body, UserAccessor userAccessor, ContentPropertyManager contentPropertyManager,
+    public TechDayService(String xhtmlBody, UserAccessor userAccessor, ContentPropertyManager contentPropertyManager,
             ContentEntityObject contentObject, ClusterManager clusterManager) {
         this(userAccessor, contentPropertyManager, clusterManager, contentObject);
-        this.talks = buildTalksFromBody(body);
+        this.talks = buildTalksFromBody(xhtmlBody);
     }
 
     /**
      * This method parses the body of the macro. It assumes that the format is:
      *
      * <pre>
-     * idName | name | speaker | type | description | comment
+     * | idName | name | speaker | type | description | comment |
      * </pre>
      *
      * Where type is the text version of the
@@ -67,19 +67,23 @@ public class TechDayService {
      * @return list of {@link com.tngtech.confluence.techday.data.Talk}
      */
     private List<Talk> buildTalksFromBody(String body) {
-        Jerry xhtml = jerry(body);
-        Jerry lines = xhtml.$("table").find("tr");
+        final Jerry xhtml = jerry(body);
+        final Jerry lines = xhtml.$("table").find("tr");
 
         lines.each(new JerryFunction() {
+            private String innerH(Jerry it, int index) {
+                return it.get(index).getInnerHtml().trim();
+            }
+
             @Override
             public boolean onNode(Jerry $this, int index) {
                 Jerry children = $this.children();
                 String idName = children.get(0).getTextContent().trim();
-                String name = children.get(1).getInnerHtml().trim();
-                String speaker = children.get(2).getInnerHtml().trim();
-                String type = children.get(3).getInnerHtml().trim();
-                String description = children.get(4).getInnerHtml().trim();
-                String comment = children.get(5).getInnerHtml().trim();
+                String name = innerH(children, 1);
+                String speaker = innerH(children, 2);
+                String type = children.get(3).getTextContent().trim();
+                String description = innerH(children, 4);
+                String comment = innerH(children, 5);
                 Talk talk = new Talk(idName, name, speaker, description, comment, TalkType.valueOf(type),
                         userAccessor);
                 talk.setAudience(getAudience(idName));
@@ -135,29 +139,6 @@ public class TechDayService {
         return users;
     }
 
-    void sortTalks() {
-        sortTalks(talks);
-    }
-
-    void sortTalks(List<Talk> talks) {
-        Collections.sort(talks, new Comparator<Talk>() {
-            public int compare(Talk o1, Talk o2) {
-                int audience2 = o2.getAudience().size();
-                int audience1 = o1.getAudience().size();
-                if (audience1 < audience2)
-                    return 1;
-                if (audience1 == audience2)
-                    return 0;
-                return -1;
-            }
-        });
-        Collections.sort(talks, new Comparator<Talk>() {
-            public int compare(Talk o1, Talk o2) {
-                return o1.getType().compareTo(o2.getType());
-            }
-        });
-    }
-
     static String buildPropertyString(String idName) {
         return "techday." + idName;
     }
@@ -170,7 +151,6 @@ public class TechDayService {
     }
 
     public Map<TalkType, List<Talk>> getTalksByType() {
-        // TreeMap implements SortedMap
         Map<TalkType, List<Talk>> result = new TreeMap<TalkType, List<Talk>>();
         for (Talk talk : talks) {
             if (!result.containsKey(talk.getType())) {
@@ -180,7 +160,7 @@ public class TechDayService {
         }
 
         for (Map.Entry<TalkType, List<Talk>> entry : result.entrySet()) {
-            sortTalks(entry.getValue());
+            Collections.sort(entry.getValue());
         }
         return result;
     }
