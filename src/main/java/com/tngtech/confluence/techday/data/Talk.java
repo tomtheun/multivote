@@ -1,6 +1,7 @@
 package com.tngtech.confluence.techday.data;
 
 import com.atlassian.confluence.user.UserAccessor;
+import com.atlassian.confluence.velocity.htmlsafe.HtmlSafe;
 import com.atlassian.user.User;
 import org.apache.commons.lang.StringUtils;
 //import org.apache.log4j.Category;
@@ -11,8 +12,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Talk {
-    //private static final Category log = Logger.getLogger(Talk.class);
+public class Talk implements Comparable<Talk> {
+    @Override
+    public String toString() {
+        return "Talk [speaker=" + speaker + ", idName=" + idName + ", name=" + name + ", description=" + description
+                + ", comment=" + comment + ", type=" + type + ", audience=" + audience + "]";
+    }
 
     private String speaker;
     private String idName;
@@ -22,6 +27,17 @@ public class Talk {
     private TalkType type;
     private Set<String> audience = new HashSet<String>();
     private UserAccessor userAccessor; // TODO this does not belong here
+    
+    @Override
+    public int compareTo(Talk other) {
+        int audience2 = other.getAudience().size();
+        int audience1 = this.getAudience().size();
+        if (audience1 < audience2)
+            return 1;
+        if (audience1 == audience2)
+            return this.getType().compareTo(other.getType());
+        return -1;
+    }
 
     public Talk(String idName, String name, String speaker, String description, String comment, TalkType type, UserAccessor userAccessor) {
         super();
@@ -81,6 +97,7 @@ public class Talk {
         return audience.remove(user);
     }
 
+    @HtmlSafe
     public String getSpeaker() {
         return speaker;
     }
@@ -89,14 +106,17 @@ public class Talk {
         return idName;
     }
 
+    @HtmlSafe
     public String getName() {
         return name;
     }
 
+    @HtmlSafe
     public String getDescription() {
         return description;
     }
 
+    @HtmlSafe
     public String getComment() {
         return comment;
     }
@@ -108,7 +128,7 @@ public class Talk {
     public Set<String> getAudience() {
         return audience;
     }
-    
+
     public void setAudience(Set<String> audience) {
         this.audience = audience;
     }
