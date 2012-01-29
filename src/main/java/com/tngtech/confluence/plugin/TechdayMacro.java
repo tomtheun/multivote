@@ -74,8 +74,8 @@ public class TechdayMacro extends BaseMacro {
         HttpServletRequest request = ServletActionContext.getRequest();
         if (request != null) {
             String remoteUser = request.getRemoteUser();
-            String requestTalk = request.getParameter("techday.idname");
-            String requestUse = request.getParameter("techday.interested");
+            String requestTalk = request.getParameter("multivote.idname");
+            String requestUse = request.getParameter("multivote.interested");
             techDayService.recordInterest(remoteUser, requestTalk, Boolean.parseBoolean(requestUse));
         }
 
@@ -88,7 +88,7 @@ public class TechdayMacro extends BaseMacro {
         contextMap.put("wikiStyleRenderer", wikiStyleRenderer);
 
         try {
-            return VelocityUtils.getRenderedTemplate("templates/extra/techday/techdaymacro.vm", contextMap);
+            return VelocityUtils.getRenderedTemplate("templates/extra/multivote.vm", contextMap);
         } catch (Exception e) {
             throw new MacroException(e);
         }

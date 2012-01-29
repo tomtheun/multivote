@@ -4,8 +4,8 @@
 (function ($) {
     "use strict";
     $(function () {
-        var pageId = AJS.params.TechdayPluginPageId,
-            interestedLink = $("a[ id ^= 'techday']"),
+        var pageId = AJS.params.multivotePageId,
+            interestedLink = $("a[ id ^= 'multivote']"),
             getInterestImage = function (interested) {
                 if (interested) {
                     return AJS.params.interestedImage;

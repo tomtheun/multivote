@@ -10,7 +10,7 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
     private long idOfPageContainingMacro;
     private static final String MACROSTRING = "multivote";
     protected static final String TALK_ID = "1000";
-    protected static final String LINK_ID = "techday." + TALK_ID;
+    protected static final String LINK_ID = "multivote." + TALK_ID;
     protected static final String XPATH_LINE_CLASS = "//div[@class='wiki-content']/table/tbody/tr";
     protected static final String AUDIENCE_XPATH = "//td[@id='audience." + TALK_ID + "']";
     private static final String header = "|| id || name || author || description ||\n";
