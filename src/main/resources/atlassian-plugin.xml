@@ -13,7 +13,6 @@
 
     <macro name='multivote' class='${project.groupId}.MultivoteMacro'
         key='multivote'>
-        <description>Vote for a Topic, allows to vote for multiple entries.</description>
         <resource type="velocity" name="help" location="templates/multivote-help.vm">
             <param name="help-section" value="tables"/>
         </resource>
