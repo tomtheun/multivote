@@ -1,4 +1,4 @@
-package it.com.tngtech.confluence.techday;
+package it.com.tngtech.confluence.plugin;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -78,7 +78,10 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
         return getElementAttributeByXPath(AUDIENCE_XPATH, "title");
     }
 
-    public void testVoting() {
+    // TODO these are several tests in one, but the setup is quite expensive
+    // we don't have @BeforeClass, but it can be simulated with TestSuite,
+    // see http://stackoverflow.com/questions/3023091/does-junit-3-have-something-analogous-to-beforeclass
+    public void testVoting() throws InterruptedException {
         assertNoVote();
 
         clickVoteLink();
@@ -88,6 +91,7 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
         assertVoted();
 
         clickVoteLink();
+        Thread.sleep(1000);
 
         assertNoVote();
         refreshPage();

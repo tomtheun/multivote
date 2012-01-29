@@ -1,4 +1,4 @@
-package it.com.tngtech.confluence.techday;
+package it.com.tngtech.confluence.plugin;
 
 
 import com.atlassian.confluence.plugin.functest.helper.PageHelper;

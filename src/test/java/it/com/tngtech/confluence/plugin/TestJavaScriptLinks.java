@@ -1,4 +1,4 @@
-package it.com.tngtech.confluence.techday;
+package it.com.tngtech.confluence.plugin;
 
 import static com.atlassian.selenium.browsers.AutoInstallClient.assertThat;
 import static com.atlassian.selenium.browsers.AutoInstallClient.seleniumClient;
@@ -39,27 +39,9 @@ public class TestJavaScriptLinks extends BaseIntegration {
         super.tearDown();
     }
 
-    // TODO these are several tests in one, but the setup is quite expensive
-    // we don't have @BeforeClass, but it can be simulated with TestSuite,
-    // see http://stackoverflow.com/questions/3023091/does-junit-3-have-something-analogous-to-beforeclass
-    public void testVoting() {
-        assertNoVote();
-
-        clickVoteLink();
-
-        assertVoted();
-        refreshPage();
-        assertVoted();
-
-        clickVoteLink();
-
-        assertNoVote();
-        refreshPage();
-        assertNoVote();
-    }
-
     protected void refreshPage() {
         selenium.refresh();
+        selenium.waitForPageToLoad("30000");
     }
 
     protected void assertVoted() {
@@ -87,6 +69,7 @@ public class TestJavaScriptLinks extends BaseIntegration {
             assertFalse(selenium.isElementPresent("//td[@id='audience.1000' and @title!='']"));
             return;
         }
+
         assertEquals(audience, selenium.getAttribute("//td[@id='audience.1000']/@title"));
     }
 
