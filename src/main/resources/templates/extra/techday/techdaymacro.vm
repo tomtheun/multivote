@@ -1,9 +1,9 @@
 #set($renderer=$wikiStyleRenderer)
-#set($resPath="download/resources/com.tngtech.confluence.techday.techday-plugin:resources")
+#set($resPath="download/resources/com.tngtech.confluence.plugin.multivote:resources") <!-- TODO read from property? -->
 #requireResource("confluence.web.resources:jquery")
-#requireResource("com.tngtech.confluence.techday.techday-plugin:resources")
+#requireResource("com.tngtech.confluence.plugin.multivote:resources")
 <fieldset class="hidden parameters">
-    <input type="hidden" id="TechdayPluginPageId" value="$content.getIdAsString()"/> <!-- TODO id -->
+    <input type="hidden" id="TechdayPluginPageId" value="$content.getIdAsString()"/>
     <input type="hidden" id="notInterestedImage" value="$req.contextPath/$resPath/checkbox_unchecked.png" />
     <input type="hidden" id="interestedImage" value="$req.contextPath/$resPath/checkbox_checked.png" />
     <input type="hidden" id="progressImage" value="$req.contextPath/$resPath/roller.gif" />
@@ -15,8 +15,8 @@
             #foreach ( $header in $headers )
                 <th>$header</th>
             #end
-            <th>$action.getText('com.tngtech.techday.talk.noOfAudience')</th>
-            <th>$action.getText('com.tngtech.techday.talk.interest')</th>
+            <th>$action.getText('multivote.result')</th>
+            <th>$action.getText('multivote.vote')</th>
 	    </tr>
 	</thead>
 	<tbody>

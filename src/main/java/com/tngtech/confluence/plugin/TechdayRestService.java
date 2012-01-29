@@ -1,4 +1,4 @@
-package com.tngtech.confluence.techday;
+package com.tngtech.confluence.plugin;
 
 import java.security.Principal;
 
@@ -22,8 +22,8 @@ import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.plugins.rest.common.security.AuthenticationContext;
 import com.atlassian.spring.container.ContainerManager;
-import com.tngtech.confluence.techday.data.Talk;
-import com.tngtech.confluence.techday.data.VoteResponse;
+import com.tngtech.confluence.plugin.data.Talk;
+import com.tngtech.confluence.plugin.data.VoteResponse;
 
 @Path("/vote")
 public class TechdayRestService {

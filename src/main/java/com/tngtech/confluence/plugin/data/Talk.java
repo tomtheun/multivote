@@ -1,4 +1,4 @@
-package com.tngtech.confluence.techday.data;
+package com.tngtech.confluence.plugin.data;
 
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.confluence.velocity.htmlsafe.HtmlSafe;

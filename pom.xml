@@ -5,8 +5,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.tngtech.confluence.techday</groupId>
-    <artifactId>techday-plugin</artifactId>
+    <groupId>com.tngtech.confluence.plugin</groupId>
+    <artifactId>multivote</artifactId>
     <version>0.0.10</version>
 
     <organization>
@@ -14,8 +14,8 @@
         <url>http://www.tngtech.com/</url>
     </organization>
 
-    <name>Techday Manage Plugin</name>
-    <description>Simple Confluence plugin for managing software techday</description>
+    <name>Multivote Plugin</name>
+    <description>Simple Confluence plugin to vote for multiple items</description>
     <packaging>atlassian-plugin</packaging>
 
     <url />
@@ -160,7 +160,7 @@
         <confluence.plugin.bundled>true</confluence.plugin.bundled>
         <confluence.plugin.install>true</confluence.plugin.install>
 
-        <atlassian.plugin.key>com.tngtech.confluence.techday.techday-plugin</atlassian.plugin.key>
+        <atlassian.plugin.key>com.tngtech.confluence.plugin.multivote</atlassian.plugin.key>
         <atlassian.product.test-lib.version>2.2</atlassian.product.test-lib.version>
     </properties>
 </project>

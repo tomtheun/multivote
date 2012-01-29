@@ -1,4 +1,4 @@
-package com.tngtech.confluence.techday.data;
+package com.tngtech.confluence.plugin.data;
 
 import javax.xml.bind.annotation.*;
 

@@ -1,4 +1,4 @@
-package com.tngtech.confluence.techday;
+package com.tngtech.confluence.plugin;
 
 import static jodd.lagarto.dom.jerry.Jerry.jerry;
 
@@ -19,7 +19,7 @@ import com.atlassian.confluence.cluster.ClusteredLock;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.core.ContentPropertyManager;
 import com.atlassian.confluence.user.UserAccessor;
-import com.tngtech.confluence.techday.data.Talk;
+import com.tngtech.confluence.plugin.data.Talk;
 
 // TODO convert to a proper service, inject..
 // TODO check for duplicate IDs in talks
@@ -59,7 +59,7 @@ public class TechDayService {
      *
      * @param body
      *            of the Macro
-     * @return list of {@link com.tngtech.confluence.techday.data.Talk}
+     * @return list of {@link com.tngtech.confluence.plugin.data.Talk}
      */
     private List<Talk> buildTalksFromBody(String body) {
         final Jerry xhtml = jerry(body);

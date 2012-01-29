@@ -1,4 +1,4 @@
-package com.tngtech.confluence.techday;
+package com.tngtech.confluence.plugin;
 
 import java.util.Map;
 
