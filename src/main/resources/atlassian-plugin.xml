@@ -1,5 +1,4 @@
-<atlassian-plugin key="${project.groupId}.${project.artifactId}"
-    name="${project.name}" plugins-version="2">
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
     <plugin-info>
         <description>${project.description}</description>
         <version>${project.version}</version>
@@ -8,15 +7,28 @@
 
     <resource type="i18n" name="i18n" location="AtlassianPlugin" />
 
+    <macro name='multivote' class='${project.groupId}.TechdayMacro'
+        key='multivote'>
+        <description>Vote for a Topic, allows to vote for multiple entries.</description>
+        <resource type="velocity" name="help" location="templates/multivote-help.vm">
+            <param name="help-section" value="tables"/>
+        </resource>
+        <category name="confluence-content"/>
+        <parameters>
+            <parameter name="" type="string" required="true">
+                <alias name="id"/>
+            </parameter>
+        </parameters>
+    </macro>
+
     <macro name='techday-plugin' class='${project.groupId}.TechdayMacro'
         key='techday-plugin'>
-        <!-- TODO: Add macro description -->
-        <!-- <description></description> -->
+        <description>Deprecated, use {multivote} instead</description>
+        <category name="development"/>
     </macro>
 
     <rest key="rest-service-resources" path="/techday" version="0.1">
-        <description>Plugin to list techday talks and state interest in
-            them</description>
+        <description></description>
     </rest>
 
     <web-resource name="Resources" key="resources">

@@ -3,52 +3,47 @@
 #requireResource("confluence.web.resources:jquery")
 #requireResource("com.tngtech.confluence.techday.techday-plugin:resources")
 <fieldset class="hidden parameters">
-    <input type="hidden" id="TechdayPluginPageId" value="$content.getIdAsString()"/>
+    <input type="hidden" id="TechdayPluginPageId" value="$content.getIdAsString()"/> <!-- TODO id -->
     <input type="hidden" id="notInterestedImage" value="$req.contextPath/$resPath/checkbox_unchecked.png" />
     <input type="hidden" id="interestedImage" value="$req.contextPath/$resPath/checkbox_checked.png" />
     <input type="hidden" id="progressImage" value="$req.contextPath/$resPath/roller.gif" />
 </fieldset>
-#foreach( $talktype in $talks.keySet() )
-    $renderer.convertWikiToXHtml($content.toPageContext(), "h2. $talktype")
-    <table class="grid" id="$talktype">
-    <thead>
-        <tr>
-            <th>$action.getText('com.tngtech.techday.talk.name')</th>
-            <th>$action.getText('com.tngtech.techday.talk.speaker')</th>
-            <th>$action.getText('com.tngtech.techday.talk.description')</th>
-            <th>$action.getText('com.tngtech.techday.talk.comment')</th>
+
+<table class="grid" id="$tableId">
+	<thead><!-- TODO -->
+	    <tr>
+            #foreach ( $header in $headers )
+                <th>$header</th>
+            #end
             <th>$action.getText('com.tngtech.techday.talk.noOfAudience')</th>
             <th>$action.getText('com.tngtech.techday.talk.interest')</th>
-        </tr>
-    </thead>
-
-    <tbody>
-    #foreach ( $talk in $talks.get($talktype) )
-        #set ($interested = $talk.isInterested($req.remoteUser))
-        #if ($interested)
-            #set ($classIntr = "interested")
-        #else
-            #set ($classIntr = "notInterested")
-        #end
-        <tr class=$classIntr>
-            <td>$talk.name</td>
-            <td>$talk.speaker</td>
-            <td>$talk.description</td>
-            <td>$talk.comment</td>
-            <td id="audience.$generalUtil.urlEncode($talk.idName)" title="$talk.userFullNamesAsString">$talk.totalAudience</td>
-            <td align="center">
-                #if ($interested)
-                    <a id="techday.$generalUtil.urlEncode($talk.idName)" data-interest="false" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&techday.idname=$generalUtil.urlEncode($talk.idName)&techday.interested=false" >
-                       <img src="$req.contextPath/$resPath/checkbox_checked.png" width=20 border=0 align="absmiddle">
-                   </a>
-                #else
-                    <a id="techday.$generalUtil.urlEncode($talk.idName)" data-interest="true" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&techday.idname=$generalUtil.urlEncode($talk.idName)&techday.interested=true" >
-                      <img src="$req.contextPath/$resPath/checkbox_unchecked.png" width=20 border=0 align="absmiddle">
-                    </a>
-                #end
-            </td>
-        </tr>
-    #end
-    </tbody>
-    </table>
-#end
+	    </tr>
+	</thead>
+	<tbody>
+	#foreach ( $talk in $talks )
+	    #set ($interested = $talk.isInterested($req.remoteUser))
+	    #if ($interested)
+	        #set ($classIntr = "interested")
+	    #else
+	        #set ($classIntr = "notInterested")
+	    #end
+	    <tr class=$classIntr>
+	        #foreach ( $field in $talk.getFields() )
+	            <td>$field</td>
+	        #end
+	        <td id="audience.$generalUtil.urlEncode($talk.idName)" title="$talk.userFullNamesAsString">$talk.totalAudience</td>
+	        <td align="center">
+	            #if ($interested)
+	                <a id="techday.$generalUtil.urlEncode($talk.idName)" data-interest="false" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&techday.idname=$generalUtil.urlEncode($talk.idName)&techday.interested=false" >
+	                   <img src="$req.contextPath/$resPath/checkbox_checked.png" width=20 border=0 align="absmiddle">
+	               </a>
+	            #else
+	                <a id="techday.$generalUtil.urlEncode($talk.idName)" data-interest="true" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&techday.idname=$generalUtil.urlEncode($talk.idName)&techday.interested=true" >
+	                  <img src="$req.contextPath/$resPath/checkbox_unchecked.png" width=20 border=0 align="absmiddle">
+	                </a>
+	            #end
+	        </td>
+	    </tr>
+	#end
+	</tbody>
+</table>

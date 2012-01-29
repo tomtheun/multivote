@@ -8,34 +8,37 @@ import com.atlassian.confluence.plugin.functest.helper.SpaceHelper;
 
 public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCase {
     private long idOfPageContainingMacro;
-    private static final String MACROSTRING = "{techday-plugin}";
+    private static final String MACROSTRING = "multivote";
     protected static final String TALK_ID = "1000";
     protected static final String LINK_ID = "techday." + TALK_ID;
     protected static final String XPATH_LINE_CLASS = "//div[@class='wiki-content']/table/tbody/tr";
     protected static final String AUDIENCE_XPATH = "//td[@id='audience." + TALK_ID + "']";
+    private static final String header = "|| id || name || author || description ||\n";
+    private static final String CONTENT = "{" + MACROSTRING + ":tableID}" + "\n" + header +
+            "|" + TALK_ID + " | TalkName | TalkAutor | TalkAnmerkung |\n{" + MACROSTRING + "}";
 
     protected void setUp() throws Exception {
         final SpaceHelper spaceHelper;
         final PageHelper pageHelper;
-    
+
         super.setUp();
-    
+
         spaceHelper = getSpaceHelper();
         spaceHelper.setKey("TST");
         spaceHelper.delete(); // if it fails, we're fine
-        
+
         spaceHelper.setName("Test Space");
         spaceHelper.setDescription("Test Space For TechDay Macro");
-    
+
         assertTrue(spaceHelper.create());
-    
+
         pageHelper = getPageHelper();
         pageHelper.setSpaceKey(spaceHelper.getKey());
         pageHelper.setTitle("Techday Macro Test");
         pageHelper.setContent(StringUtils.EMPTY);
-    
+
         assertTrue(pageHelper.create());
-    
+
         idOfPageContainingMacro = pageHelper.getId();
     }
 
@@ -46,20 +49,20 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
 
     public PageHelper createTechDayTable() {
         final PageHelper pageHelper = getPageHelper(idOfPageContainingMacro);
-    
+
         assertTrue(pageHelper.read());
-    
+
         pageHelper
-                .setContent(MACROSTRING + "\n| " + TALK_ID + " | TalkName | TalkAutor | TALK | | TalkAnmerkung |\n" + MACROSTRING);
-    
+                .setContent(CONTENT);
+
         assertTrue(pageHelper.update());
         gotoPage("/pages/viewpage.action?pageId=" + pageHelper.getId());
-    
+
         assertTextNotPresent(TALK_ID);
         assertTextPresent("TalkName");
         assertTextPresent("TalkAutor");
         assertTextPresent("TalkAnmerkung");
-    
+
         return pageHelper;
     }
 
@@ -74,4 +77,25 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
     protected String getAudience() {
         return getElementAttributeByXPath(AUDIENCE_XPATH, "title");
     }
+
+    public void testVoting() {
+        assertNoVote();
+
+        clickVoteLink();
+
+        assertVoted();
+        refreshPage();
+        assertVoted();
+
+        clickVoteLink();
+
+        assertNoVote();
+        refreshPage();
+        assertNoVote();
+    }
+
+    protected abstract void assertNoVote();
+    protected abstract void clickVoteLink();
+    protected abstract void assertVoted();
+    protected abstract void refreshPage();
 }

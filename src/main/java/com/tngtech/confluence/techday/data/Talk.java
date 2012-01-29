@@ -4,8 +4,6 @@ import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.confluence.velocity.htmlsafe.HtmlSafe;
 import com.atlassian.user.User;
 import org.apache.commons.lang.StringUtils;
-//import org.apache.log4j.Category;
-//import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,45 +11,29 @@ import java.util.List;
 import java.util.Set;
 
 public class Talk implements Comparable<Talk> {
-    @Override
-    public String toString() {
-        return "Talk [speaker=" + speaker + ", idName=" + idName + ", name=" + name + ", description=" + description
-                + ", comment=" + comment + ", type=" + type + ", audience=" + audience + "]";
-    }
-
-    private String speaker;
-    private String idName;
-    private String name;
-    private String description;
-    private String comment;
-    private TalkType type;
-    private Set<String> audience = new HashSet<String>();
     private UserAccessor userAccessor; // TODO this does not belong here
-    
+    private String idName;
+    private Set<String> audience = new HashSet<String>();
+    private List<String> fields;
+
     @Override
     public int compareTo(Talk other) {
         int audience2 = other.getAudience().size();
         int audience1 = this.getAudience().size();
         if (audience1 < audience2)
             return 1;
-        if (audience1 == audience2)
-            return this.getType().compareTo(other.getType());
         return -1;
-    }
-
-    public Talk(String idName, String name, String speaker, String description, String comment, TalkType type, UserAccessor userAccessor) {
-        super();
-        this.idName = idName;
-        this.speaker = speaker;
-        this.name = name;
-        this.comment = comment;
-        this.description = description;
-        this.type = type;
-        this.userAccessor = userAccessor;
     }
 
     public Talk(String idName, UserAccessor userAccessor) {
         this.idName = idName;
+        this.userAccessor = userAccessor;
+    }
+
+    public Talk(String idName, List<String> fields, Set<String> audience, UserAccessor userAccessor) {
+        this.idName = idName;
+        this.fields = fields;
+        this.audience = audience;
         this.userAccessor = userAccessor;
     }
 
@@ -97,32 +79,8 @@ public class Talk implements Comparable<Talk> {
         return audience.remove(user);
     }
 
-    @HtmlSafe
-    public String getSpeaker() {
-        return speaker;
-    }
-
     public String getIdName() {
         return idName;
-    }
-
-    @HtmlSafe
-    public String getName() {
-        return name;
-    }
-
-    @HtmlSafe
-    public String getDescription() {
-        return description;
-    }
-
-    @HtmlSafe
-    public String getComment() {
-        return comment;
-    }
-
-    public TalkType getType() {
-        return type;
     }
 
     public Set<String> getAudience() {
@@ -131,5 +89,14 @@ public class Talk implements Comparable<Talk> {
 
     public void setAudience(Set<String> audience) {
         this.audience = audience;
+    }
+    
+    @HtmlSafe
+    public List<String> getFields() {
+        return fields;
+    }
+
+    public void setFields(List<String> fields) {
+        this.fields = fields;
     }
 }

@@ -56,9 +56,10 @@ public class TechdayRestService {
 
     @POST
     @Produces({MediaType.APPLICATION_JSON})
-    @Path("/record/{techdayMacroPageId}")
+    @Path("/record/{techdayMacroPageId}/{tableId}")
     public Response voteInterested(
 			             @PathParam("techdayMacroPageId") String techdayMacroPageId,
+			             @PathParam("tableId") String tableId,
                          @QueryParam("interested") Boolean interested,
                          @QueryParam("talkId") String talkId,
                          @Context AuthenticationContext authenticationContext) {
@@ -70,7 +71,7 @@ public class TechdayRestService {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
-        TechDayService techDayService = new TechDayService(userAccessor, contentPropertyManager, clusterManager, page);
+        TechDayService techDayService = new TechDayService(tableId, userAccessor, contentPropertyManager, clusterManager, page);
         Talk talk = techDayService.retrieveTalk(talkId);
         techDayService.recordInterest(user, talkId, interested);
 

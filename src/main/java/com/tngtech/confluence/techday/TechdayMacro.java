@@ -1,9 +1,10 @@
 package com.tngtech.confluence.techday;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.openqa.jetty.html.Table;
 
 import com.atlassian.confluence.cluster.ClusterManager;
 import com.atlassian.confluence.core.ContentEntityObject;
@@ -19,8 +20,6 @@ import com.atlassian.renderer.v2.macro.BaseMacro;
 import com.atlassian.renderer.v2.macro.MacroException;
 import com.atlassian.spring.container.ContainerManager;
 import com.opensymphony.webwork.ServletActionContext;
-import com.tngtech.confluence.techday.data.Talk;
-import com.tngtech.confluence.techday.data.TalkType;
 
 /**
  * This class provides the simple functionality of the techday planning plugin.
@@ -62,8 +61,15 @@ public class TechdayMacro extends BaseMacro {
     public String execute(Map params, String body, RenderContext renderContext) throws MacroException {
         ContentEntityObject contentObject = ((PageContext)renderContext).getEntity();
 
+        String tableId = (String)params.get("0");
+        if (tableId == null) {
+            throw new MacroException("id is mandatory");
+        } else if(!tableId.matches("^\\p{Alpha}\\p{Alnum}+$")) {
+            throw new MacroException("id is only allowed to contain alphanumeric characters and has to start with a letter");
+        }
+
         String table = wikiStyleRenderer.convertWikiToXHtml(renderContext, body);
-        TechDayService techDayService = new TechDayService(table, userAccessor, contentPropertyManager, contentObject, clusterManager);
+        TechDayService techDayService = new TechDayService(table, tableId,  userAccessor, contentPropertyManager, contentObject, clusterManager);
 
         HttpServletRequest request = ServletActionContext.getRequest();
         if (request != null) {
@@ -73,10 +79,11 @@ public class TechdayMacro extends BaseMacro {
             techDayService.recordInterest(remoteUser, requestTalk, Boolean.parseBoolean(requestUse));
         }
 
-        Map<TalkType, List<Talk>> talks = techDayService.getTalksByType();
-
         Map<String, Object> contextMap = MacroUtils.defaultVelocityContext();
-        contextMap.put("talks", talks);
+
+        contextMap.put("tableId", tableId);
+        contextMap.put("headers", techDayService.getHeader());
+        contextMap.put("talks", techDayService.getTalks());
         contextMap.put("content", contentObject);
         contextMap.put("wikiStyleRenderer", wikiStyleRenderer);
 

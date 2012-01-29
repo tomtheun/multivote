@@ -3,14 +3,12 @@ package com.tngtech.confluence.techday;
 import static jodd.lagarto.dom.jerry.Jerry.jerry;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.TreeMap;
 
+import jodd.lagarto.dom.Node;
 import jodd.lagarto.dom.jerry.Jerry;
 import jodd.lagarto.dom.jerry.JerryFunction;
 
@@ -22,7 +20,6 @@ import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.core.ContentPropertyManager;
 import com.atlassian.confluence.user.UserAccessor;
 import com.tngtech.confluence.techday.data.Talk;
-import com.tngtech.confluence.techday.data.TalkType;
 
 // TODO convert to a proper service, inject..
 // TODO check for duplicate IDs in talks
@@ -31,24 +28,22 @@ public class TechDayService {
     protected ContentEntityObject contentObject;
     private UserAccessor userAccessor;
     private ClusterManager clusterManager;
-
-    public List<Talk> getTalks() {
-        return talks;
-    }
-
     private List<Talk> talks = new ArrayList<Talk>();
+    private List<String> header = new ArrayList<String>();
+    private String tableId;
 
-    public TechDayService(UserAccessor userAccessor, ContentPropertyManager contentPropertyManager,
+    public TechDayService(String tableId, UserAccessor userAccessor, ContentPropertyManager contentPropertyManager,
             ClusterManager clusterManager, ContentEntityObject contentObject) {
+        this.tableId = tableId;
         this.contentPropertyManager = contentPropertyManager;
         this.userAccessor = userAccessor;
         this.clusterManager = clusterManager;
         this.contentObject = contentObject;
     }
 
-    public TechDayService(String xhtmlBody, UserAccessor userAccessor, ContentPropertyManager contentPropertyManager,
+    public TechDayService(String xhtmlBody, String tableId, UserAccessor userAccessor, ContentPropertyManager contentPropertyManager,
             ContentEntityObject contentObject, ClusterManager clusterManager) {
-        this(userAccessor, contentPropertyManager, clusterManager, contentObject);
+        this(tableId, userAccessor, contentPropertyManager, clusterManager, contentObject);
         this.talks = buildTalksFromBody(xhtmlBody);
     }
 
@@ -70,23 +65,26 @@ public class TechDayService {
         final Jerry xhtml = jerry(body);
         final Jerry lines = xhtml.$("table").find("tr");
 
-        lines.each(new JerryFunction() {
-            private String innerH(Jerry it, int index) {
+        for (Node node: lines.first().children().gt(0).get()) {
+            header.add(node.getInnerHtml());
+        }
+
+        lines.gt(0).each(new JerryFunction() {
+            private String innerHtml(Jerry it, int index) {
                 return it.get(index).getInnerHtml().trim();
             }
 
             @Override
             public boolean onNode(Jerry $this, int index) {
                 Jerry children = $this.children();
+                List<String> fields = new ArrayList<String>();
+
                 String idName = children.get(0).getTextContent().trim();
-                String name = innerH(children, 1);
-                String speaker = innerH(children, 2);
-                String type = children.get(3).getTextContent().trim();
-                String description = innerH(children, 4);
-                String comment = innerH(children, 5);
-                Talk talk = new Talk(idName, name, speaker, description, comment, TalkType.valueOf(type),
-                        userAccessor);
-                talk.setAudience(retrieveAudience(idName));
+                for (int i=1; i<children.length(); i++) {
+                    fields.add(innerHtml(children, i));
+                }
+
+                Talk talk = new Talk(idName, fields, retrieveAudience(idName), userAccessor);
                 talks.add(talk);
                 return true;
             }
@@ -95,27 +93,13 @@ public class TechDayService {
     }
 
     void recordInterest(String remoteUser, String requestTalk, Boolean requestUse) {
-        Boolean changed;
-        String id;
         for (Talk talk : talks) {
             if (talk.getIdName().equalsIgnoreCase(requestTalk)) {
-                id = talk.getIdName();
 
-                ClusteredLock lock = null;
-                lock = clusterManager.getClusteredLock("techday.talk.lock." + id);
+                ClusteredLock lock = clusterManager.getClusteredLock("techday.talk.lock." + talk.getIdName());
                 try {
                     lock.lock();
-
-                    Set<String> users = retrieveAudience(id);
-                    if (requestUse) {
-                        changed = users.add(remoteUser);
-                    } else {
-                        changed = users.remove(remoteUser);
-                    }
-                    if (changed) {
-                        persistAudience(id, users);
-                        talk.setAudience(users);
-                    }
+			        recordInterest(remoteUser, talk, requestUse);
                 } finally {
                     if (lock != null) {
                         lock.unlock();
@@ -125,12 +109,28 @@ public class TechDayService {
         }
     }
 
+    private void recordInterest(String user, Talk talk, Boolean requestUse) {
+        boolean changed;
+        String id = talk.getIdName();
+        Set<String> users = retrieveAudience(id);
+        if (requestUse) {
+            changed = users.add(user);
+        } else {
+            changed = users.remove(user);
+        }
+        if (changed) {
+            persistAudience(id, users);
+            talk.setAudience(users);
+        }
+    }
+
     Set<String> retrieveAudience(String idName) {
         String usersAsString = contentPropertyManager.getTextProperty(contentObject, buildPropertyString(idName));
-        Set<String> users = new HashSet<String>();
         if (usersAsString == null) {
-            usersAsString = "";
+            usersAsString = getUsersAsStringMigration(idName); // TODO remove when migration is done
+            // usersAsString = ""; // TODO enable when migration is done
         }
+        Set<String> users = new HashSet<String>();
         StringTokenizer userTokenizer = new StringTokenizer(usersAsString, ",");
         while (userTokenizer.hasMoreTokens()) {
             users.add(userTokenizer.nextToken().trim());
@@ -139,12 +139,26 @@ public class TechDayService {
     }
 
     private void persistAudience(String id, Set<String> users) {
-        String property = TechDayService.buildPropertyString(id);
+        String property = buildPropertyString(id);
         contentPropertyManager.setTextProperty(contentObject, property, StringUtils.join(users, ", "));
     }
 
-    static String buildPropertyString(String idName) {
+    private String getUsersAsStringMigration(String idName) {
+        String usersAsString = contentPropertyManager.getTextProperty(contentObject, buildMigrationPropertyString(idName));
+        if (usersAsString == null) {
+            return "";
+        } else {
+            contentPropertyManager.setTextProperty(contentObject, buildPropertyString(idName), usersAsString);
+            return usersAsString;
+        }
+    }
+
+    static String buildMigrationPropertyString(String idName) {
         return "techday." + idName;
+    }
+
+    String buildPropertyString(String idName) {
+        return "multivote." + tableId + "." + idName;
     }
 
     public Talk retrieveTalk(String talkId) {
@@ -154,18 +168,11 @@ public class TechDayService {
         return talk;
     }
 
-    public Map<TalkType, List<Talk>> getTalksByType() {
-        Map<TalkType, List<Talk>> result = new TreeMap<TalkType, List<Talk>>();
-        for (Talk talk : talks) {
-            if (!result.containsKey(talk.getType())) {
-                result.put(talk.getType(), new ArrayList<Talk>());
-            }
-            result.get(talk.getType()).add(talk);
-        }
+    public List<Talk> getTalks() {
+        return talks;
+    }
 
-        for (Map.Entry<TalkType, List<Talk>> entry : result.entrySet()) {
-            Collections.sort(entry.getValue());
-        }
-        return result;
+    public List<String> getHeader() {
+        return header;
     }
 }

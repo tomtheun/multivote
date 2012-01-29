@@ -3,9 +3,7 @@ package it.com.tngtech.confluence.techday;
 
 import com.atlassian.confluence.plugin.functest.helper.PageHelper;
 
-public class TestStaticLinks extends BaseIntegration 
-{ 
-
+public class TestStaticLinks extends BaseIntegration { 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -18,30 +16,23 @@ public class TestStaticLinks extends BaseIntegration
         super.tearDown();
     }
     
-    public void testVotingChangesAudience() {
-        assertEquals("", getAudience());
+    protected void refreshPage() {
+        // not needed, clicking the link refreshes the page anyway
+    }
+
+    protected void clickVoteLink() {
         clickLink(LINK_ID);
+    }
+
+    protected void assertVoted() {
         assertEquals("admin", getAudience());
-        clickLink(LINK_ID);
-        assertEquals("", getAudience());
-    }
-
-    public void testVotingChangesAudienceCount() {
-        assertEquals("0", getAudienceCount());
-        clickLink(LINK_ID);
         assertEquals("1", getAudienceCount());
-        clickLink(LINK_ID);
-        assertEquals("0", getAudienceCount());
-    }
-    
-    public void testVotingChangesLineClass() {
-        assertEquals(getVotedLineClass(), "notInterested");
-        clickLink(LINK_ID);
         assertEquals(getVotedLineClass(), "interested");
-        clickLink(LINK_ID);
-        assertEquals(getVotedLineClass(), "notInterested");
     }
 
-    // TODO user full name. "admin" is just the login name
-    // change type of line (coloring)
+    protected void assertNoVote() {
+        assertEquals("", getAudience());
+        assertEquals("0", getAudienceCount());
+        assertEquals(getVotedLineClass(), "notInterested");
+    }
 }
