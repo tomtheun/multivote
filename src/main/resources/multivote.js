@@ -16,7 +16,7 @@
 
         interestedLink.click(function () {
             var that = $(this),
-                talkId = that.attr("id").replace(/[^0-9]/g, ""),
+                itemId = that.attr("id").replace(/[^0-9]/g, ""),
                 interested = (that.attr("data-interest") === "true"),
                 audience = that.parent().parent().find("td[ id ^= 'audience']"),
                 tableId = that.parent().parent().parent().parent().get(0).id,
@@ -31,7 +31,7 @@
             // TODO use property for url
             url = contextPath + "/rest/multivote/0.1/vote/record/" + pageId + "/" + tableId +
                 "?" + $.param([
-                {name:"talkId", value:talkId},
+                {name:"itemId", value:itemId},
                 {name:"interested", value:interested}
             ]);
 

@@ -7,7 +7,7 @@ import com.atlassian.confluence.plugin.functest.helper.PageHelper;
 import com.atlassian.selenium.SeleniumClient;
 
 public class TestJavaScriptLinks extends BaseIntegration {
-    private static final String AUDIENCE_LOC = "audience."+TALK_ID;
+    private static final String AUDIENCE_LOC = "audience."+ITEM_ID;
 
     private static final String VOTE_LINK = "//a[@id='"+LINK_ID+"']/img";
 

@@ -22,7 +22,7 @@ import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.plugins.rest.common.security.AuthenticationContext;
 import com.atlassian.spring.container.ContainerManager;
-import com.tngtech.confluence.plugin.data.Talk;
+import com.tngtech.confluence.plugin.data.VoteItem;
 import com.tngtech.confluence.plugin.data.VoteResponse;
 
 @Path("/vote")
@@ -61,7 +61,7 @@ public class MultivoteRestService {
 			             @PathParam("techdayMacroPageId") String techdayMacroPageId,
 			             @PathParam("tableId") String tableId,
                          @QueryParam("interested") Boolean interested,
-                         @QueryParam("talkId") String talkId,
+                         @QueryParam("itemId") String itemId,
                          @Context AuthenticationContext authenticationContext) {
         String user = getUser(authenticationContext);
         Page page = pageManager.getPage((long)Integer.parseInt(techdayMacroPageId));
@@ -72,11 +72,11 @@ public class MultivoteRestService {
         }
 
         MultiVote multiVote = new MultiVote(tableId, userAccessor, contentPropertyManager, clusterManager, page);
-        Talk talk = multiVote.retrieveTalk(talkId);
-        multiVote.recordInterest(user, talkId, interested);
+        VoteItem item = multiVote.retrieveItem(itemId);
+        multiVote.recordInterest(user, itemId, interested);
 
-        String userFullNamesAsString = talk.getUserFullNamesAsString();
-        return Response.ok(new VoteResponse(talkId, userFullNamesAsString, talk.getTotalAudience())).build();
+        String userFullNamesAsString = item.getUserFullNamesAsString();
+        return Response.ok(new VoteResponse(itemId, userFullNamesAsString, item.getTotalAudience())).build();
     }
 
     private String getUser(AuthenticationContext context) {

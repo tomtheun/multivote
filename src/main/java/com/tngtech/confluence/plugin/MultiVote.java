@@ -19,16 +19,16 @@ import com.atlassian.confluence.cluster.ClusteredLock;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.core.ContentPropertyManager;
 import com.atlassian.confluence.user.UserAccessor;
-import com.tngtech.confluence.plugin.data.Talk;
+import com.tngtech.confluence.plugin.data.VoteItem;
 
 // TODO convert to a proper service, inject..
-// TODO check for duplicate IDs in talks
+// TODO check for duplicate IDs in items
 public class MultiVote {
     protected ContentPropertyManager contentPropertyManager;
     protected ContentEntityObject contentObject;
     private UserAccessor userAccessor;
     private ClusterManager clusterManager;
-    private List<Talk> talks = new ArrayList<Talk>();
+    private List<VoteItem> items = new ArrayList<VoteItem>();
     private List<String> header = new ArrayList<String>();
     private String tableId;
 
@@ -44,24 +44,22 @@ public class MultiVote {
     public MultiVote(String xhtmlBody, String tableId, UserAccessor userAccessor, ContentPropertyManager contentPropertyManager,
             ContentEntityObject contentObject, ClusterManager clusterManager) {
         this(tableId, userAccessor, contentPropertyManager, clusterManager, contentObject);
-        this.talks = buildTalksFromBody(xhtmlBody);
+        this.items = buildItemsFromBody(xhtmlBody);
     }
 
     /**
      * This method parses the body of the macro. It assumes that the format is:
      *
      * <pre>
-     * | idName | name | speaker | type | description | comment |
+     * |  ID    | header_1 | ( header_n | )+
+     * | idName | column_1 | ( column_n | )+
      * </pre>
-     *
-     * Where type is the text version of the
-     * {@link com.tngtech.confluence.techday.data.TalkType} values.
      *
      * @param body
      *            of the Macro
-     * @return list of {@link com.tngtech.confluence.plugin.data.Talk}
+     * @return list of {@link com.tngtech.confluence.plugin.data.VoteItem}
      */
-    private List<Talk> buildTalksFromBody(String body) {
+    private List<VoteItem> buildItemsFromBody(String body) {
         final Jerry xhtml = jerry(body);
         final Jerry lines = xhtml.$("table").find("tr");
 
@@ -84,22 +82,21 @@ public class MultiVote {
                     fields.add(innerHtml(children, i));
                 }
 
-                Talk talk = new Talk(idName, fields, retrieveAudience(idName), userAccessor);
-                talks.add(talk);
+                VoteItem item = new VoteItem(idName, fields, retrieveAudience(idName), userAccessor);
+                items.add(item);
                 return true;
             }
         });
-        return talks;
+        return items;
     }
 
-    void recordInterest(String remoteUser, String requestTalk, Boolean requestUse) {
-        for (Talk talk : talks) {
-            if (talk.getIdName().equalsIgnoreCase(requestTalk)) {
-
-                ClusteredLock lock = clusterManager.getClusteredLock("techday.talk.lock." + talk.getIdName());
+    void recordInterest(String remoteUser, String requestItem, Boolean requestUse) {
+        for (VoteItem item : items) {
+            if (item.getIdName().equalsIgnoreCase(requestItem)) {
+                ClusteredLock lock = clusterManager.getClusteredLock("multivote.lock." + tableId + "." + item.getIdName());
                 try {
                     lock.lock();
-			        recordInterest(remoteUser, talk, requestUse);
+			        recordInterest(remoteUser, item, requestUse);
                 } finally {
                     if (lock != null) {
                         lock.unlock();
@@ -109,9 +106,9 @@ public class MultiVote {
         }
     }
 
-    private void recordInterest(String user, Talk talk, Boolean requestUse) {
+    private void recordInterest(String user, VoteItem item, Boolean requestUse) {
         boolean changed;
-        String id = talk.getIdName();
+        String id = item.getIdName();
         Set<String> users = retrieveAudience(id);
         if (requestUse) {
             changed = users.add(user);
@@ -120,7 +117,7 @@ public class MultiVote {
         }
         if (changed) {
             persistAudience(id, users);
-            talk.setAudience(users);
+            item.setAudience(users);
         }
     }
 
@@ -161,15 +158,15 @@ public class MultiVote {
         return "multivote." + tableId + "." + idName;
     }
 
-    public Talk retrieveTalk(String talkId) {
-        Talk talk = new Talk(talkId, userAccessor);
-        talk.setAudience(retrieveAudience(talkId));
-        talks.add(talk);
-        return talk;
+    public VoteItem retrieveItem(String itemId) {
+        VoteItem item = new VoteItem(itemId, userAccessor);
+        item.setAudience(retrieveAudience(itemId));
+        items.add(item);
+        return item;
     }
 
-    public List<Talk> getTalks() {
-        return talks;
+    public List<VoteItem> getItems() {
+        return items;
     }
 
     public List<String> getHeader() {

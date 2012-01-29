@@ -72,16 +72,16 @@ public class MultivoteMacro extends BaseMacro {
         HttpServletRequest request = ServletActionContext.getRequest();
         if (request != null) {
             String remoteUser = request.getRemoteUser();
-            String requestTalk = request.getParameter("multivote.idname");
+            String requestItem = request.getParameter("multivote.idname");
             String requestUse = request.getParameter("multivote.interested");
-            multiVote.recordInterest(remoteUser, requestTalk, Boolean.parseBoolean(requestUse));
+            multiVote.recordInterest(remoteUser, requestItem, Boolean.parseBoolean(requestUse));
         }
 
         Map<String, Object> contextMap = MacroUtils.defaultVelocityContext();
 
         contextMap.put("tableId", tableId);
         contextMap.put("headers", multiVote.getHeader());
-        contextMap.put("talks", multiVote.getTalks());
+        contextMap.put("items", multiVote.getItems());
         contextMap.put("content", contentObject);
         contextMap.put("wikiStyleRenderer", wikiStyleRenderer);
 

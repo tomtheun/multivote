@@ -20,25 +20,25 @@
 	    </tr>
 	</thead>
 	<tbody>
-	#foreach ( $talk in $talks )
-	    #set ($interested = $talk.isInterested($req.remoteUser))
+	#foreach ( $item in $items )
+	    #set ($interested = $item.isInterested($req.remoteUser))
 	    #if ($interested)
 	        #set ($classIntr = "interested")
 	    #else
 	        #set ($classIntr = "notInterested")
 	    #end
 	    <tr class=$classIntr>
-	        #foreach ( $field in $talk.getFields() )
+	        #foreach ( $field in $item.getFields() )
 	            <td>$field</td>
 	        #end
-	        <td id="audience.$generalUtil.urlEncode($talk.idName)" title="$talk.userFullNamesAsString">$talk.totalAudience</td>
+	        <td id="audience.$generalUtil.urlEncode($item.idName)" title="$item.userFullNamesAsString">$item.totalAudience</td>
 	        <td align="center">
 	            #if ($interested)
-	                <a id="multivote.$generalUtil.urlEncode($talk.idName)" data-interest="false" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&multivote.idname=$generalUtil.urlEncode($talk.idName)&multivote.interested=false" >
+	                <a id="multivote.$generalUtil.urlEncode($item.idName)" data-interest="false" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&multivote.idname=$generalUtil.urlEncode($item.idName)&multivote.interested=false" >
 	                   <img src="$req.contextPath/$resPath/checkbox_checked.png" width=20 border=0 align="absmiddle">
 	               </a>
 	            #else
-	                <a id="multivote.$generalUtil.urlEncode($talk.idName)" data-interest="true" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&multivote.idname=$generalUtil.urlEncode($talk.idName)&multivote.interested=true" >
+	                <a id="multivote.$generalUtil.urlEncode($item.idName)" data-interest="true" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&multivote.idname=$generalUtil.urlEncode($item.idName)&multivote.interested=true" >
 	                  <img src="$req.contextPath/$resPath/checkbox_unchecked.png" width=20 border=0 align="absmiddle">
 	                </a>
 	            #end

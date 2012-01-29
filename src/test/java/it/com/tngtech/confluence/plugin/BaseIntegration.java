@@ -9,13 +9,13 @@ import com.atlassian.confluence.plugin.functest.helper.SpaceHelper;
 public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCase {
     private long idOfPageContainingMacro;
     private static final String MACROSTRING = "multivote";
-    protected static final String TALK_ID = "1000";
-    protected static final String LINK_ID = "multivote." + TALK_ID;
+    protected static final String ITEM_ID = "1000";
+    protected static final String LINK_ID = "multivote." + ITEM_ID;
     protected static final String XPATH_LINE_CLASS = "//div[@class='wiki-content']/table/tbody/tr";
-    protected static final String AUDIENCE_XPATH = "//td[@id='audience." + TALK_ID + "']";
+    protected static final String AUDIENCE_XPATH = "//td[@id='audience." + ITEM_ID + "']";
     private static final String header = "|| id || name || author || description ||\n";
     private static final String CONTENT = "{" + MACROSTRING + ":tableID}" + "\n" + header +
-            "|" + TALK_ID + " | TalkName | TalkAutor | TalkAnmerkung |\n{" + MACROSTRING + "}";
+            "|" + ITEM_ID + " | Column1 | Column2 | Column3 |\n{" + MACROSTRING + "}";
 
     protected void setUp() throws Exception {
         final SpaceHelper spaceHelper;
@@ -58,10 +58,10 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
         assertTrue(pageHelper.update());
         gotoPage("/pages/viewpage.action?pageId=" + pageHelper.getId());
 
-        assertTextNotPresent(TALK_ID);
-        assertTextPresent("TalkName");
-        assertTextPresent("TalkAutor");
-        assertTextPresent("TalkAnmerkung");
+        assertTextNotPresent(ITEM_ID);
+        assertTextPresent("Column1");
+        assertTextPresent("Column2");
+        assertTextPresent("Column2");
 
         return pageHelper;
     }

@@ -10,14 +10,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Talk implements Comparable<Talk> {
+public class VoteItem implements Comparable<VoteItem> {
     private UserAccessor userAccessor; // TODO this does not belong here
     private String idName;
     private Set<String> audience = new HashSet<String>();
     private List<String> fields;
 
     @Override
-    public int compareTo(Talk other) {
+    public int compareTo(VoteItem other) {
         int audience2 = other.getAudience().size();
         int audience1 = this.getAudience().size();
         if (audience1 < audience2)
@@ -25,12 +25,12 @@ public class Talk implements Comparable<Talk> {
         return -1;
     }
 
-    public Talk(String idName, UserAccessor userAccessor) {
+    public VoteItem(String idName, UserAccessor userAccessor) {
         this.idName = idName;
         this.userAccessor = userAccessor;
     }
 
-    public Talk(String idName, List<String> fields, Set<String> audience, UserAccessor userAccessor) {
+    public VoteItem(String idName, List<String> fields, Set<String> audience, UserAccessor userAccessor) {
         this.idName = idName;
         this.fields = fields;
         this.audience = audience;
