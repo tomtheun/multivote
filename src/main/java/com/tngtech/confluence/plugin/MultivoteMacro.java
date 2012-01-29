@@ -4,8 +4,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.openqa.jetty.html.Table;
-
 import com.atlassian.confluence.cluster.ClusterManager;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.core.ContentPropertyManager;
@@ -24,7 +22,7 @@ import com.opensymphony.webwork.ServletActionContext;
 /**
  * This class provides the simple functionality of the techday planning plugin.
  */
-public class TechdayMacro extends BaseMacro {
+public class MultivoteMacro extends BaseMacro {
     //private static final Category log = Logger.getLogger(TechdayMacro.class);
     protected ContentPropertyManager contentPropertyManager;
 
@@ -49,7 +47,7 @@ public class TechdayMacro extends BaseMacro {
         return RenderMode.NO_RENDER;
     }
 
-    public TechdayMacro() {
+    public MultivoteMacro() {
         this.userAccessor = (UserAccessor) ContainerManager.getInstance().getContainerContext().getComponent("userAccessor");
     }
 
