@@ -149,6 +149,14 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-amps-plugin</artifactId>
+                <configuration>
+                    <!-- disable fastdev, its deployment is much slower than atlas-cli.. -->
+                    <fastdevEnable>false</fastdevEnable>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
