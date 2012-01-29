@@ -57,7 +57,8 @@ public class TechdayRestService {
     @POST
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/record/{techdayMacroPageId}")
-    public Response voteInterested(@PathParam("techdayMacroPageId") String techdayMacroPageId,
+    public Response voteInterested(
+			             @PathParam("techdayMacroPageId") String techdayMacroPageId,
                          @QueryParam("interested") Boolean interested,
                          @QueryParam("talkId") String talkId,
                          @Context AuthenticationContext authenticationContext) {
@@ -70,11 +71,11 @@ public class TechdayRestService {
         }
 
         TechDayService techDayService = new TechDayService(userAccessor, contentPropertyManager, clusterManager, page);
-        Talk talk = techDayService.addTalk(talkId);
+        Talk talk = techDayService.retrieveTalk(talkId);
         techDayService.recordInterest(user, talkId, interested);
 
         String userFullNamesAsString = talk.getUserFullNamesAsString();
-        return Response.ok( new VoteResponse(talkId, userFullNamesAsString, talk.getTotalAudience())).build();
+        return Response.ok(new VoteResponse(talkId, userFullNamesAsString, talk.getTotalAudience())).build();
     }
 
     private String getUser(AuthenticationContext context) {

@@ -86,7 +86,7 @@ public class TechDayService {
                 String comment = innerH(children, 5);
                 Talk talk = new Talk(idName, name, speaker, description, comment, TalkType.valueOf(type),
                         userAccessor);
-                talk.setAudience(getAudience(idName));
+                talk.setAudience(retrieveAudience(idName));
                 talks.add(talk);
                 return true;
             }
@@ -106,15 +106,14 @@ public class TechDayService {
                 try {
                     lock.lock();
 
-                    Set<String> users = getAudience(id);
+                    Set<String> users = retrieveAudience(id);
                     if (requestUse) {
                         changed = users.add(remoteUser);
                     } else {
                         changed = users.remove(remoteUser);
                     }
                     if (changed) {
-                        String property = TechDayService.buildPropertyString(talk.getIdName());
-                        contentPropertyManager.setTextProperty(contentObject, property, StringUtils.join(users, ", "));
+                        persistAudience(id, users);
                         talk.setAudience(users);
                     }
                 } finally {
@@ -126,7 +125,7 @@ public class TechDayService {
         }
     }
 
-    Set<String> getAudience(String idName) {
+    Set<String> retrieveAudience(String idName) {
         String usersAsString = contentPropertyManager.getTextProperty(contentObject, buildPropertyString(idName));
         Set<String> users = new HashSet<String>();
         if (usersAsString == null) {
@@ -139,13 +138,18 @@ public class TechDayService {
         return users;
     }
 
+    private void persistAudience(String id, Set<String> users) {
+        String property = TechDayService.buildPropertyString(id);
+        contentPropertyManager.setTextProperty(contentObject, property, StringUtils.join(users, ", "));
+    }
+
     static String buildPropertyString(String idName) {
         return "techday." + idName;
     }
 
-    public Talk addTalk(String talkId) {
+    public Talk retrieveTalk(String talkId) {
         Talk talk = new Talk(talkId, userAccessor);
-        talk.setAudience(getAudience(talkId));
+        talk.setAudience(retrieveAudience(talkId));
         talks.add(talk);
         return talk;
     }
