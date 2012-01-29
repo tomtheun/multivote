@@ -13,8 +13,6 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 
-import com.atlassian.confluence.cluster.ClusterManager;
-import com.atlassian.confluence.core.ContentPropertyManager;
 import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.pages.PageManager;
 import com.atlassian.confluence.security.Permission;
@@ -29,10 +27,13 @@ import com.tngtech.confluence.plugin.data.VoteResponse;
 public class MultivoteRestService {
     private static final Logger log = Logger.getLogger(MultivoteRestService.class);
     private PageManager pageManager;
-    private ContentPropertyManager contentPropertyManager;
     private UserAccessor userAccessor;
-    private ClusterManager clusterManager;
     private PermissionManager permissionManager;
+    private MultiVote multiVote;
+
+    public void setMultiVote(MultiVote multiVote) {
+        this.multiVote = multiVote;
+    }
 
     public MultivoteRestService () {
         this.userAccessor = (UserAccessor) ContainerManager.getInstance().getContainerContext().getComponent("userAccessor");
@@ -42,16 +43,8 @@ public class MultivoteRestService {
         this.permissionManager = permissionManager;
     }
 
-    public void setClusterManager(ClusterManager clusterManager) {
-        this.clusterManager = clusterManager;
-    }
-
     public void setPageManager(PageManager pageManager) {
         this.pageManager = pageManager;
-    }
-
-    public void setContentPropertyManager(ContentPropertyManager contentPropertyManager) {
-        this.contentPropertyManager = contentPropertyManager;
     }
 
     @POST
@@ -71,11 +64,10 @@ public class MultivoteRestService {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
-        MultiVote multiVote = new MultiVote(tableId, userAccessor, contentPropertyManager, clusterManager, page);
-        VoteItem item = multiVote.retrieveItem(itemId);
-        multiVote.recordInterest(user, itemId, interested);
+        multiVote.recordInterest(user, interested, page, tableId, itemId);
 
-        String userFullNamesAsString = item.getUserFullNamesAsString();
+        VoteItem item = multiVote.retrieveItem(page, tableId, itemId);
+        String userFullNamesAsString = multiVote.getUserFullNamesAsString(item.getAudience());
         return Response.ok(new VoteResponse(itemId, userFullNamesAsString, item.getTotalAudience())).build();
     }
 

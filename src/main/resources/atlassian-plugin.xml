@@ -7,6 +7,10 @@
 
     <resource type="i18n" name="i18n" location="AtlassianPlugin" />
 
+    <component key='multivote-service' class="${project.groupId}.DefaultMultiVote" name="Multivote Service">
+        <interface>${project.groupId}.MultiVote</interface>
+    </component>
+
     <macro name='multivote' class='${project.groupId}.MultivoteMacro'
         key='multivote'>
         <description>Vote for a Topic, allows to vote for multiple entries.</description>

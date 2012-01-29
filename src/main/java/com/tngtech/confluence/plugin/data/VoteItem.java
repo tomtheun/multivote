@@ -1,17 +1,14 @@
 package com.tngtech.confluence.plugin.data;
 
-import com.atlassian.confluence.user.UserAccessor;
-import com.atlassian.confluence.velocity.htmlsafe.HtmlSafe;
-import com.atlassian.user.User;
-import org.apache.commons.lang.StringUtils;
-
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.atlassian.confluence.velocity.htmlsafe.HtmlSafe;
+
 public class VoteItem implements Comparable<VoteItem> {
-    private UserAccessor userAccessor; // TODO this does not belong here
     private String idName;
     private Set<String> audience = new HashSet<String>();
     private List<String> fields;
@@ -25,16 +22,14 @@ public class VoteItem implements Comparable<VoteItem> {
         return -1;
     }
 
-    public VoteItem(String idName, UserAccessor userAccessor) {
+    public VoteItem(String idName, Set<String> audience) {
         this.idName = idName;
-        this.userAccessor = userAccessor;
+        this.audience = audience;
     }
 
-    public VoteItem(String idName, List<String> fields, Set<String> audience, UserAccessor userAccessor) {
-        this.idName = idName;
+    public VoteItem(String idName, List<String> fields, Set<String> audience) {
+        this(idName, audience);
         this.fields = fields;
-        this.audience = audience;
-        this.userAccessor = userAccessor;
     }
 
     public boolean isInterested(String user) {
@@ -45,31 +40,9 @@ public class VoteItem implements Comparable<VoteItem> {
         return audience.size();
     }
 
-    private String getFullName(String userName) {
-        String fullName = userName;
-        User user = userAccessor.getUser(userName);
-        if (null != user) {
-            fullName = user.getFullName();
-        }
-        if (null == fullName) {
-            fullName = userName;
-        }
-        return fullName;
-    }
-
     public String getUsersAsString() {
         return StringUtils.join(audience, ", ");
     }
-
-    public String getUserFullNamesAsString() {
-        List<String> fullNames = new ArrayList<String>();
-
-        for (String userName: audience) {
-            fullNames.add(getFullName(userName));
-        }
-        return StringUtils.join(fullNames, ", ");
-    }
-
 
     public boolean addAudience(String user) {
         return audience.add(user);
@@ -87,16 +60,8 @@ public class VoteItem implements Comparable<VoteItem> {
         return audience;
     }
 
-    public void setAudience(Set<String> audience) {
-        this.audience = audience;
-    }
-    
     @HtmlSafe
     public List<String> getFields() {
         return fields;
-    }
-
-    public void setFields(List<String> fields) {
-        this.fields = fields;
     }
 }

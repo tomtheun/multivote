@@ -4,19 +4,16 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.atlassian.confluence.cluster.ClusterManager;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.core.ContentPropertyManager;
 import com.atlassian.confluence.renderer.PageContext;
 import com.atlassian.confluence.renderer.radeox.macros.MacroUtils;
-import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.confluence.util.velocity.VelocityUtils;
 import com.atlassian.renderer.RenderContext;
 import com.atlassian.renderer.WikiStyleRenderer;
 import com.atlassian.renderer.v2.RenderMode;
 import com.atlassian.renderer.v2.macro.BaseMacro;
 import com.atlassian.renderer.v2.macro.MacroException;
-import com.atlassian.spring.container.ContainerManager;
 import com.opensymphony.webwork.ServletActionContext;
 
 /**
@@ -27,12 +24,10 @@ public class MultivoteMacro extends BaseMacro {
     protected ContentPropertyManager contentPropertyManager;
 
     protected WikiStyleRenderer wikiStyleRenderer;
-    private UserAccessor userAccessor;
+    private MultiVote multiVote;
 
-    private ClusterManager clusterManager;
-
-    public void setClusterManager(ClusterManager clusterManager) {
-        this.clusterManager = clusterManager;
+    public void setMultiVote(MultiVote multiVote) {
+        this.multiVote = multiVote;
     }
 
     public boolean isInline() {
@@ -45,10 +40,6 @@ public class MultivoteMacro extends BaseMacro {
 
     public RenderMode getBodyRenderMode() {
         return RenderMode.NO_RENDER;
-    }
-
-    public MultivoteMacro() {
-        this.userAccessor = (UserAccessor) ContainerManager.getInstance().getContainerContext().getComponent("userAccessor");
     }
 
     /**
@@ -66,26 +57,25 @@ public class MultivoteMacro extends BaseMacro {
             throw new MacroException("id is only allowed to contain alphanumeric characters and has to start with a letter");
         }
 
-        String table = wikiStyleRenderer.convertWikiToXHtml(renderContext, body);
-        MultiVote multiVote = new MultiVote(table, tableId,  userAccessor, contentPropertyManager, contentObject, clusterManager);
-
         HttpServletRequest request = ServletActionContext.getRequest();
         if (request != null) {
             String remoteUser = request.getRemoteUser();
             String requestItem = request.getParameter("multivote.idname");
             String requestUse = request.getParameter("multivote.interested");
             if (tableId.equals(request.getParameter("multivote.tableId"))) {
-	            multiVote.recordInterest(remoteUser, requestItem, Boolean.parseBoolean(requestUse));
+	            multiVote.recordInterest(remoteUser, Boolean.parseBoolean(requestUse), contentObject, tableId, requestItem);
             }
         }
 
         Map<String, Object> contextMap = MacroUtils.defaultVelocityContext();
 
+        String table = wikiStyleRenderer.convertWikiToXHtml(renderContext, body);
         contextMap.put("tableId", tableId);
-        contextMap.put("headers", multiVote.getHeader());
-        contextMap.put("items", multiVote.getItems());
+        contextMap.put("headers", multiVote.buildHeadersFromBody(tableId, table));
+        contextMap.put("items", multiVote.buildItemsFromBody(contentObject, tableId, table));
         contextMap.put("content", contentObject);
         contextMap.put("wikiStyleRenderer", wikiStyleRenderer);
+        contextMap.put("multiVote", multiVote);
 
         try {
             return VelocityUtils.getRenderedTemplate("templates/extra/multivote.vm", contextMap);
