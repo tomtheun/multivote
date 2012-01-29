@@ -21,8 +21,8 @@
         </parameters>
     </macro>
 
-    <rest key="rest-service-resources" path="/techday" version="0.1">
-        <description></description>
+    <rest key="rest-service-resources" path="/multivote" version="0.1">
+        <description>rest service for ajax requests for the multivote macro</description>
     </rest>
 
     <web-resource name="Resources" key="resources">

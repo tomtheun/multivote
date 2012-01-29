@@ -29,7 +29,7 @@
             }
 
             // TODO use property for url
-            url = contextPath + "/rest/techday/0.1/vote/record/" + pageId + "/" + tableId +
+            url = contextPath + "/rest/multivote/0.1/vote/record/" + pageId + "/" + tableId +
                 "?" + $.param([
                 {name:"talkId", value:talkId},
                 {name:"interested", value:interested}
