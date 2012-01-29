@@ -26,15 +26,15 @@ import com.tngtech.confluence.plugin.data.Talk;
 import com.tngtech.confluence.plugin.data.VoteResponse;
 
 @Path("/vote")
-public class TechdayRestService {
-    private static final Logger log = Logger.getLogger(TechdayRestService.class);
+public class MultivoteRestService {
+    private static final Logger log = Logger.getLogger(MultivoteRestService.class);
     private PageManager pageManager;
     private ContentPropertyManager contentPropertyManager;
     private UserAccessor userAccessor;
     private ClusterManager clusterManager;
     private PermissionManager permissionManager;
 
-    public TechdayRestService () {
+    public MultivoteRestService () {
         this.userAccessor = (UserAccessor) ContainerManager.getInstance().getContainerContext().getComponent("userAccessor");
     }
 
@@ -71,9 +71,9 @@ public class TechdayRestService {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
-        TechDayService techDayService = new TechDayService(tableId, userAccessor, contentPropertyManager, clusterManager, page);
-        Talk talk = techDayService.retrieveTalk(talkId);
-        techDayService.recordInterest(user, talkId, interested);
+        MultiVote multiVote = new MultiVote(tableId, userAccessor, contentPropertyManager, clusterManager, page);
+        Talk talk = multiVote.retrieveTalk(talkId);
+        multiVote.recordInterest(user, talkId, interested);
 
         String userFullNamesAsString = talk.getUserFullNamesAsString();
         return Response.ok(new VoteResponse(talkId, userFullNamesAsString, talk.getTotalAudience())).build();

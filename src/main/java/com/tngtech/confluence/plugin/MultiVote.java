@@ -23,7 +23,7 @@ import com.tngtech.confluence.plugin.data.Talk;
 
 // TODO convert to a proper service, inject..
 // TODO check for duplicate IDs in talks
-public class TechDayService {
+public class MultiVote {
     protected ContentPropertyManager contentPropertyManager;
     protected ContentEntityObject contentObject;
     private UserAccessor userAccessor;
@@ -32,7 +32,7 @@ public class TechDayService {
     private List<String> header = new ArrayList<String>();
     private String tableId;
 
-    public TechDayService(String tableId, UserAccessor userAccessor, ContentPropertyManager contentPropertyManager,
+    public MultiVote(String tableId, UserAccessor userAccessor, ContentPropertyManager contentPropertyManager,
             ClusterManager clusterManager, ContentEntityObject contentObject) {
         this.tableId = tableId;
         this.contentPropertyManager = contentPropertyManager;
@@ -41,7 +41,7 @@ public class TechDayService {
         this.contentObject = contentObject;
     }
 
-    public TechDayService(String xhtmlBody, String tableId, UserAccessor userAccessor, ContentPropertyManager contentPropertyManager,
+    public MultiVote(String xhtmlBody, String tableId, UserAccessor userAccessor, ContentPropertyManager contentPropertyManager,
             ContentEntityObject contentObject, ClusterManager clusterManager) {
         this(tableId, userAccessor, contentPropertyManager, clusterManager, contentObject);
         this.talks = buildTalksFromBody(xhtmlBody);

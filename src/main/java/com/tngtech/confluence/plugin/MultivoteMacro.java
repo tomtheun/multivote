@@ -67,21 +67,21 @@ public class MultivoteMacro extends BaseMacro {
         }
 
         String table = wikiStyleRenderer.convertWikiToXHtml(renderContext, body);
-        TechDayService techDayService = new TechDayService(table, tableId,  userAccessor, contentPropertyManager, contentObject, clusterManager);
+        MultiVote multiVote = new MultiVote(table, tableId,  userAccessor, contentPropertyManager, contentObject, clusterManager);
 
         HttpServletRequest request = ServletActionContext.getRequest();
         if (request != null) {
             String remoteUser = request.getRemoteUser();
             String requestTalk = request.getParameter("multivote.idname");
             String requestUse = request.getParameter("multivote.interested");
-            techDayService.recordInterest(remoteUser, requestTalk, Boolean.parseBoolean(requestUse));
+            multiVote.recordInterest(remoteUser, requestTalk, Boolean.parseBoolean(requestUse));
         }
 
         Map<String, Object> contextMap = MacroUtils.defaultVelocityContext();
 
         contextMap.put("tableId", tableId);
-        contextMap.put("headers", techDayService.getHeader());
-        contextMap.put("talks", techDayService.getTalks());
+        contextMap.put("headers", multiVote.getHeader());
+        contextMap.put("talks", multiVote.getTalks());
         contextMap.put("content", contentObject);
         contextMap.put("wikiStyleRenderer", wikiStyleRenderer);
 
