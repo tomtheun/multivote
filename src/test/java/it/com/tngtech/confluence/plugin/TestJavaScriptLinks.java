@@ -7,11 +7,10 @@ import com.atlassian.confluence.plugin.functest.helper.PageHelper;
 import com.atlassian.selenium.SeleniumClient;
 
 public class TestJavaScriptLinks extends BaseIntegration {
-    private static final String AUDIENCE_LOC = "audience."+ITEM_ID;
-
-    private static final String VOTE_LINK = "//a[@id='"+LINK_ID+"']/img";
-
     SeleniumClient selenium;
+    private static String audienceLoc(String tableId) {
+        return "//table[@id='"+tableId+"']//td[@id='audience."+ITEM_ID+"']";
+    }
 
     @Override
     protected void setUp() throws Exception {
@@ -44,36 +43,36 @@ public class TestJavaScriptLinks extends BaseIntegration {
         selenium.waitForPageToLoad("30000");
     }
 
-    protected void assertVoted() {
-        assertAudienceEquals("admin");
-        assertAudienceCountEquals(1);
-        assertLineClassEquals("interested");
+    protected void assertVoted(String tableId) {
+        assertAudienceEquals(tableId, "admin");
+        assertAudienceCountEquals(tableId, 1);
+        assertLineClassEquals(tableId, "interested");
     }
 
-    protected void assertNoVote() {
-        assertAudienceEquals("");
-        assertAudienceCountEquals(0);
-        assertLineClassEquals("notInterested");
+    protected void assertNoVote(String tableId) {
+        assertAudienceEquals(tableId, "");
+        assertAudienceCountEquals(tableId, 0);
+        assertLineClassEquals(tableId, "notInterested");
     }
 
-    private void assertLineClassEquals(String value) {
-        assertThat().attributeContainsValue(XPATH_LINE_CLASS, "class", value);
+    private void assertLineClassEquals(String tableId, String value) {
+        assertThat().attributeContainsValue(xpathLineClass(tableId), "class", value);
     }
 
-    protected void clickVoteLink() {
-        selenium.clickAndWaitForAjaxWithJquery(VOTE_LINK);
+    protected void clickVoteLink(String tableId) {
+        selenium.clickAndWaitForAjaxWithJquery(voteLink(tableId));
     }
 
-    private void assertAudienceEquals(String audience) {
+    private void assertAudienceEquals(String tableId, String audience) {
         if (audience == "") {
-            assertFalse(selenium.isElementPresent("//td[@id='audience.1000' and @title!='']"));
+            assertFalse(selenium.isElementPresent("//table[@id='"+ tableId +"']//td[@id='audience." + ITEM_ID +"' and @title!='']"));
             return;
         }
 
-        assertEquals(audience, selenium.getAttribute("//td[@id='audience.1000']/@title"));
+        assertEquals(audience, selenium.getAttribute("//table[@id='"+ tableId +"']//td[@id='audience." + ITEM_ID + "']/@title"));
     }
 
-    private void assertAudienceCountEquals(Integer count) {
-        assertThat().elementContainsText(AUDIENCE_LOC, count.toString());
+    private void assertAudienceCountEquals(String tableId, Integer count) {
+        assertThat().elementContainsText(audienceLoc(tableId), count.toString()); // TODO
     }
 }

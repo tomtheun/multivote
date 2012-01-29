@@ -9,13 +9,39 @@ import com.atlassian.confluence.plugin.functest.helper.SpaceHelper;
 public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCase {
     private long idOfPageContainingMacro;
     private static final String MACROSTRING = "multivote";
-    protected static final String ITEM_ID = "1000";
-    protected static final String LINK_ID = "multivote." + ITEM_ID;
-    protected static final String XPATH_LINE_CLASS = "//div[@class='wiki-content']/table/tbody/tr";
-    protected static final String AUDIENCE_XPATH = "//td[@id='audience." + ITEM_ID + "']";
     private static final String header = "|| id || name || author || description ||\n";
-    private static final String CONTENT = "{" + MACROSTRING + ":tableID}" + "\n" + header +
-            "|" + ITEM_ID + " | Column1 | Column2 | Column3 |\n{" + MACROSTRING + "}";
+
+    // personalize to talk
+    protected static final String ITEM_ID = "1000";
+
+    protected static final String LINK_ID = "multivote.";
+
+    private static final String TABLE_ID1 = "tableID1";
+    private static final String TABLE_ID2 = "tableID2";
+    private static final String CONTENT1 = buildContent(TABLE_ID1);
+
+    private static final String CONTENT2 = buildContent(TABLE_ID2);
+
+
+    private static String buildContent(String tableId) {
+        return //"{table-plus:sortDescending=true|sortColumn=4}" +
+            "{" + MACROSTRING + ":" + tableId + "}" + "\n" + header + "|" + ITEM_ID
+	        + " | Column1 | Column2 | Column3 |\n{" + MACROSTRING + "}"
+	        // + "{table-plus}"
+	        ;
+    }
+
+    private static String audienceXpath(String tableId) {
+        return "//table[@id='"+ tableId +"']//td[@id='audience." + ITEM_ID + "']";
+    }
+
+    protected static String xpathLineClass(String tableId) {
+        return "//div[@class='wiki-content']/table[@id='" + tableId + "']/tbody/tr";
+    }
+
+    protected static String voteLink(String tableId) {
+        return "//table[@id='"+ tableId +"']//a[@id='" + LINK_ID + ITEM_ID + "']";
+    }
 
     protected void setUp() throws Exception {
         final SpaceHelper spaceHelper;
@@ -52,8 +78,7 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
 
         assertTrue(pageHelper.read());
 
-        pageHelper
-                .setContent(CONTENT);
+        pageHelper.setContent(CONTENT1+"\n"+CONTENT2);
 
         assertTrue(pageHelper.update());
         gotoPage("/pages/viewpage.action?pageId=" + pageHelper.getId());
@@ -66,40 +91,53 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
         return pageHelper;
     }
 
-    protected String getVotedLineClass() {
-        return getElementAttributeByXPath(XPATH_LINE_CLASS, "class");
+    protected String getVotedLineClass(String tableId) {
+        return getElementAttributeByXPath(xpathLineClass(tableId), "class");
     }
 
-    protected String getAudienceCount() {
-        return getElementTextByXPath(AUDIENCE_XPATH);
+    protected String getAudienceCount(String id) {
+        return getElementTextByXPath(audienceXpath(id));
     }
 
-    protected String getAudience() {
-        return getElementAttributeByXPath(AUDIENCE_XPATH, "title");
+    protected String getAudience(String tableId) {
+        return getElementAttributeByXPath(audienceXpath(tableId), "title");
     }
 
     // TODO these are several tests in one, but the setup is quite expensive
     // we don't have @BeforeClass, but it can be simulated with TestSuite,
     // see http://stackoverflow.com/questions/3023091/does-junit-3-have-something-analogous-to-beforeclass
     public void testVoting() throws InterruptedException {
-        assertNoVote();
+        assertNoVote(TABLE_ID1);
+        assertNoVote(TABLE_ID2);
 
-        clickVoteLink();
+        clickVoteLink(TABLE_ID1);
 
-        assertVoted();
+        assertVoted(TABLE_ID1);
+        assertNoVote(TABLE_ID2);
         refreshPage();
-        assertVoted();
+        assertVoted(TABLE_ID1);
+        assertNoVote(TABLE_ID2);
 
-        clickVoteLink();
+        clickVoteLink(TABLE_ID1);
         Thread.sleep(1000);
 
-        assertNoVote();
+        assertNoVote(TABLE_ID1);
+        assertNoVote(TABLE_ID2);
         refreshPage();
-        assertNoVote();
+        assertNoVote(TABLE_ID1);
+        assertNoVote(TABLE_ID2);
+
+
+        clickVoteLink(TABLE_ID2);
+        assertVoted(TABLE_ID2);
+        assertNoVote(TABLE_ID1);
+        refreshPage();
+        assertVoted(TABLE_ID2);
+        assertNoVote(TABLE_ID1);
     }
 
-    protected abstract void assertNoVote();
-    protected abstract void clickVoteLink();
-    protected abstract void assertVoted();
+    protected abstract void assertNoVote(String id);
+    protected abstract void clickVoteLink(String id);
+    protected abstract void assertVoted(String id);
     protected abstract void refreshPage();
 }

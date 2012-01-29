@@ -34,11 +34,11 @@
 	        <td id="audience.$generalUtil.urlEncode($item.idName)" title="$item.userFullNamesAsString">$item.totalAudience</td>
 	        <td align="center">
 	            #if ($interested)
-	                <a id="multivote.$generalUtil.urlEncode($item.idName)" data-interest="false" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&multivote.idname=$generalUtil.urlEncode($item.idName)&multivote.interested=false" >
+	                <a id="multivote.$generalUtil.urlEncode($item.idName)" data-interest="false" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&multivote.tableId=$generalUtil.urlEncode($tableId)&multivote.idname=$generalUtil.urlEncode($item.idName)&multivote.interested=false" >
 	                   <img src="$req.contextPath/$resPath/checkbox_checked.png" width=20 border=0 align="absmiddle">
 	               </a>
 	            #else
-	                <a id="multivote.$generalUtil.urlEncode($item.idName)" data-interest="true" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&multivote.idname=$generalUtil.urlEncode($item.idName)&multivote.interested=true" >
+	                <a id="multivote.$generalUtil.urlEncode($item.idName)" data-interest="true" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&multivote.tableId=$generalUtil.urlEncode($tableId)&multivote.idname=$generalUtil.urlEncode($item.idName)&multivote.interested=true" >
 	                  <img src="$req.contextPath/$resPath/checkbox_unchecked.png" width=20 border=0 align="absmiddle">
 	                </a>
 	            #end

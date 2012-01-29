@@ -74,7 +74,9 @@ public class MultivoteMacro extends BaseMacro {
             String remoteUser = request.getRemoteUser();
             String requestItem = request.getParameter("multivote.idname");
             String requestUse = request.getParameter("multivote.interested");
-            multiVote.recordInterest(remoteUser, requestItem, Boolean.parseBoolean(requestUse));
+            if (tableId.equals(request.getParameter("multivote.tableId"))) {
+	            multiVote.recordInterest(remoteUser, requestItem, Boolean.parseBoolean(requestUse));
+            }
         }
 
         Map<String, Object> contextMap = MacroUtils.defaultVelocityContext();
