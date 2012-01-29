@@ -21,20 +21,14 @@
         </parameters>
     </macro>
 
-    <macro name='techday-plugin' class='${project.groupId}.TechdayMacro'
-        key='techday-plugin'>
-        <description>Deprecated, use {multivote} instead</description>
-        <category name="development"/>
-    </macro>
-
     <rest key="rest-service-resources" path="/techday" version="0.1">
         <description></description>
     </rest>
 
     <web-resource name="Resources" key="resources">
         <description>Provides the Javascript and CSS files</description>
-        <resource type="download" name="techday.js" location="techday.js" />
-        <resource type="download" name="techday.css" location="css/techday.css">
+        <resource type="download" name="multivote.js" location="multivote.js" />
+        <resource type="download" name="multivote.css" location="css/multivote.css">
             <property key="content-type" value="text/css" />
         </resource>
         <resource name="checkbox_checked.png" type="download"
