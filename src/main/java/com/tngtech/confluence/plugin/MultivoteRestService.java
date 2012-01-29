@@ -68,7 +68,7 @@ public class MultivoteRestService {
 
         VoteItem item = multiVote.retrieveItem(page, tableId, itemId);
         String userFullNamesAsString = multiVote.getUserFullNamesAsString(item.getAudience());
-        return Response.ok(new VoteResponse(itemId, userFullNamesAsString, item.getTotalAudience())).build();
+        return Response.ok(new VoteResponse(itemId, userFullNamesAsString, item.getAudienceCount())).build();
     }
 
     private String getUser(AuthenticationContext context) {

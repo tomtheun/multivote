@@ -36,20 +36,12 @@ public class VoteItem implements Comparable<VoteItem> {
         return audience.contains(user);
     }
 
-    public int getTotalAudience() {
+    public int getAudienceCount() {
         return audience.size();
     }
 
     public String getUsersAsString() {
         return StringUtils.join(audience, ", ");
-    }
-
-    public boolean addAudience(String user) {
-        return audience.add(user);
-    }
-
-    public boolean removeAudience(String user) {
-        return audience.remove(user);
     }
 
     public String getIdName() {

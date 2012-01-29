@@ -31,7 +31,7 @@
 	        #foreach ( $field in $item.getFields() )
 	            <td>$field</td>
 	        #end
-	        <td id="audience.$generalUtil.urlEncode($item.idName)" title="$multiVote.getUserFullNamesAsString($item.audience)">$item.totalAudience</td>
+	        <td id="audience.$generalUtil.urlEncode($item.idName)" title="$multiVote.getUserFullNamesAsString($item.audience)">$item.audienceCount</td>
 	        <td align="center">
 	            #if ($interested)
 	                <a id="multivote.$generalUtil.urlEncode($item.idName)" data-interest="false" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&multivote.tableId=$generalUtil.urlEncode($tableId)&multivote.idname=$generalUtil.urlEncode($item.idName)&multivote.interested=false" >
