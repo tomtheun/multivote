@@ -19,7 +19,7 @@
                 itemId = that.attr("id").replace(/[^0-9]/g, ""),
                 interested = (that.attr("data-interest") === "true"),
                 audience = that.parent().parent().find("td[ id ^= 'audience']"),
-                tableId = that.parent().parent().parent().parent().get(0).id,
+                tableId = that.parent().parent().parent().parent().attr("data-tableid"),
                 contextPath = AJS.params.contextPath,
                 img = that.find("img"),
                 url;

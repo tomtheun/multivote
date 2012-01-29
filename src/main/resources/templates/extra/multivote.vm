@@ -9,7 +9,7 @@
     <input type="hidden" id="progressImage" value="$req.contextPath/$resPath/roller.gif" />
 </fieldset>
 
-<table class="grid" id="$tableId">
+<table class="grid" data-tableid="$tableId">
 	<thead><!-- TODO -->
 	    <tr>
             #foreach ( $header in $headers )

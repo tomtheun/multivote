@@ -27,20 +27,20 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
         return //"{table-plus:sortDescending=true|sortColumn=4}" +
             "{" + MACROSTRING + ":" + tableId + "}" + "\n" + header + "|" + ITEM_ID
 	        + " | Column1 | Column2 | Column3 |\n{" + MACROSTRING + "}"
-	        // + "{table-plus}"
+	        //+ "{table-plus}"
 	        ;
     }
 
     private static String audienceXpath(String tableId) {
-        return "//table[@id='"+ tableId +"']//td[@id='audience." + ITEM_ID + "']";
+        return "//table[@data-tableid='"+ tableId +"']//td[@id='audience." + ITEM_ID + "']";
     }
 
     protected static String xpathLineClass(String tableId) {
-        return "//div[@class='wiki-content']/table[@id='" + tableId + "']/tbody/tr";
+        return "//table[@data-tableid='" + tableId + "']/tbody/tr";
     }
 
     protected static String voteLink(String tableId) {
-        return "//table[@id='"+ tableId +"']//a[@id='" + LINK_ID + ITEM_ID + "']";
+        return "//table[@data-tableid='"+ tableId +"']//a[@id='" + LINK_ID + ITEM_ID + "']";
     }
 
     protected void setUp() throws Exception {

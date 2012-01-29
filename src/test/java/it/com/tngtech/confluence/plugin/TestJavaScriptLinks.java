@@ -9,7 +9,7 @@ import com.atlassian.selenium.SeleniumClient;
 public class TestJavaScriptLinks extends BaseIntegration {
     SeleniumClient selenium;
     private static String audienceLoc(String tableId) {
-        return "//table[@id='"+tableId+"']//td[@id='audience."+ITEM_ID+"']";
+        return "//table[@data-tableid='"+tableId+"']//td[@id='audience."+ITEM_ID+"']";
     }
 
     @Override
@@ -65,11 +65,11 @@ public class TestJavaScriptLinks extends BaseIntegration {
 
     private void assertAudienceEquals(String tableId, String audience) {
         if (audience == "") {
-            assertFalse(selenium.isElementPresent("//table[@id='"+ tableId +"']//td[@id='audience." + ITEM_ID +"' and @title!='']"));
+            assertFalse(selenium.isElementPresent("//table[@data-tableid='"+ tableId +"']//td[@id='audience." + ITEM_ID +"' and @title!='']"));
             return;
         }
 
-        assertEquals(audience, selenium.getAttribute("//table[@id='"+ tableId +"']//td[@id='audience." + ITEM_ID + "']/@title"));
+        assertEquals(audience, selenium.getAttribute("//table[@data-tableid='"+ tableId +"']//td[@id='audience." + ITEM_ID + "']/@title"));
     }
 
     private void assertAudienceCountEquals(String tableId, Integer count) {
