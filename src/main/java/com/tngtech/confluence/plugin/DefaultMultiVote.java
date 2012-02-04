@@ -108,8 +108,7 @@ public class DefaultMultiVote implements MultiVote {
     private Set<String> retrieveAudience(ContentEntityObject page, String tableId, String idName) {
         String usersAsString = contentPropertyManager.getTextProperty(page, buildPropertyString(tableId, idName));
         if (usersAsString == null) {
-            usersAsString = getUsersAsStringMigration(page, tableId, idName); // TODO remove when migration is done
-            // usersAsString = ""; // TODO enable when migration is done
+            usersAsString = "";
         }
         Set<String> users = new HashSet<String>();
         StringTokenizer userTokenizer = new StringTokenizer(usersAsString, ",");
@@ -122,16 +121,6 @@ public class DefaultMultiVote implements MultiVote {
     private void persistAudience(ContentEntityObject page, String tableId, String id, Set<String> users) {
         String property = buildPropertyString(tableId, id);
         contentPropertyManager.setTextProperty(page, property, StringUtils.join(users, ", "));
-    }
-
-    private String getUsersAsStringMigration(ContentEntityObject page, String tableId, String idName) {
-        String usersAsString = contentPropertyManager.getTextProperty(page, buildMigrationPropertyString(idName));
-        if (usersAsString == null) {
-            return "";
-        } else {
-            contentPropertyManager.setTextProperty(page, buildPropertyString(tableId, idName), usersAsString);
-            return usersAsString;
-        }
     }
 
     static String buildMigrationPropertyString(String idName) {
