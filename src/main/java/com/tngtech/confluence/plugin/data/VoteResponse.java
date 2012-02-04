@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.*;
 @XmlRootElement(name = "interested")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class VoteResponse {
-    @XmlElement(name = "id") //TODO
+    @XmlElement(name = "id")
     private String id;
     @XmlAttribute
     private String users;

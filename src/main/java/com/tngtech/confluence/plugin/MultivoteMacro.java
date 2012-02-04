@@ -3,6 +3,7 @@ package com.tngtech.confluence.plugin;
 import static jodd.lagarto.dom.jerry.Jerry.jerry;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +14,6 @@ import jodd.lagarto.dom.jerry.Jerry;
 import jodd.lagarto.dom.jerry.JerryFunction;
 
 import com.atlassian.confluence.core.ContentEntityObject;
-import com.atlassian.confluence.core.ContentPropertyManager;
 import com.atlassian.confluence.renderer.PageContext;
 import com.atlassian.confluence.renderer.radeox.macros.MacroUtils;
 import com.atlassian.confluence.util.velocity.VelocityUtils;
@@ -28,9 +28,7 @@ import com.tngtech.confluence.plugin.data.VoteItem;
 
 public class MultivoteMacro extends BaseMacro {
     //private static final Category log = Logger.getLogger(MultiVoteMacro.class);
-    protected ContentPropertyManager contentPropertyManager;
-
-    protected WikiStyleRenderer wikiStyleRenderer;
+    private WikiStyleRenderer wikiStyleRenderer;
     private MultiVote multiVote;
 
     public void setMultiVote(MultiVote multiVote) {
@@ -58,23 +56,33 @@ public class MultivoteMacro extends BaseMacro {
         ContentEntityObject page = ((PageContext)renderContext).getEntity();
 
         String tableId = (String)params.get("0");
+        String shouldSort = (String)params.get("sort");
         checkValidityOf(tableId);
         recordVote(page, tableId);
 
         Map<String, Object> contextMap = MacroUtils.defaultVelocityContext();
 
         String table = wikiStyleRenderer.convertWikiToXHtml(renderContext, body);
+
+        List<VoteItem> items = buildItemsFromBody(page, tableId, table);
+        sort(items, shouldSort);
+
+        contextMap.put("items", items);
         contextMap.put("tableId", tableId);
-        contextMap.put("headers", buildHeadersFromBody(tableId, table));
-        contextMap.put("items", buildItemsFromBody(page, tableId, table));
+        contextMap.put("headers", buildHeadersFromBody(table));
         contextMap.put("content", page);
-        contextMap.put("wikiStyleRenderer", wikiStyleRenderer);
         contextMap.put("multiVote", multiVote);
 
         try {
             return VelocityUtils.getRenderedTemplate("templates/extra/multivote.vm", contextMap);
         } catch (Exception e) {
             throw new MacroException(e);
+        }
+    }
+
+    private void sort(List<VoteItem> items, String sort) {
+        if ( "true".equals( sort ) ) {
+            Collections.sort(items);
         }
     }
 
@@ -98,10 +106,6 @@ public class MultivoteMacro extends BaseMacro {
         }
     }
 
-    public void setContentPropertyManager(ContentPropertyManager contentPropertyManager) {
-        this.contentPropertyManager = contentPropertyManager;
-    }
-
     public void setWikiStyleRenderer(WikiStyleRenderer wikiStyleRenderer) {
         this.wikiStyleRenderer = wikiStyleRenderer;
     }
@@ -111,11 +115,11 @@ public class MultivoteMacro extends BaseMacro {
      * <pre>
      * |  ID    | header_1 | ( header_n | )+
      * </pre>
-     *
      * @param body of the Macro
+     *
      * @return list of {@link com.tngtech.confluence.plugin.data.VoteItem}
      */
-    private List<String> buildHeadersFromBody(final String tableId, String body) {
+    private List<String> buildHeadersFromBody(String body) {
         List<String> header = new ArrayList<String>();
 
         final Jerry xhtml = jerry(body);
@@ -149,8 +153,8 @@ public class MultivoteMacro extends BaseMacro {
             }
 
             @Override
-            public boolean onNode(Jerry $this, int index) {
-                Jerry children = $this.children();
+            public boolean onNode(Jerry me, int index) {
+                Jerry children = me.children();
                 List<String> fields = new ArrayList<String>();
 
                 String itemId = children.get(0).getTextContent().trim();

@@ -1,4 +1,3 @@
-#set($renderer=$wikiStyleRenderer)
 #set($resPath="download/resources/com.tngtech.confluence.plugin.multivote:resources") <!-- TODO read from property? -->
 #requireResource("confluence.web.resources:jquery")
 #requireResource("com.tngtech.confluence.plugin.multivote:resources")

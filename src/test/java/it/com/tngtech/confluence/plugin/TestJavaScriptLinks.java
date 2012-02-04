@@ -7,7 +7,7 @@ import com.atlassian.confluence.plugin.functest.helper.PageHelper;
 import com.atlassian.selenium.SeleniumClient;
 
 public class TestJavaScriptLinks extends BaseIntegration {
-    SeleniumClient selenium;
+    private SeleniumClient selenium;
     private static String audienceLoc(String tableId) {
         return "//table[@data-tableid='"+tableId+"']//td[@id='audience."+ITEM_ID+"']";
     }
@@ -64,7 +64,7 @@ public class TestJavaScriptLinks extends BaseIntegration {
     }
 
     private void assertAudienceEquals(String tableId, String audience) {
-        if (audience == "") {
+        if ("".equals(audience)) {
             assertFalse(selenium.isElementPresent("//table[@data-tableid='"+ tableId +"']//td[@id='audience." + ITEM_ID +"' and @title!='']"));
             return;
         }

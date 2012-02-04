@@ -11,11 +11,6 @@ public class TestStaticLinks extends BaseIntegration {
         gotoPage("/pages/viewpage.action?pageId=" + pageHelper.getId());
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     protected void refreshPage() {
         // not needed, clicking the link refreshes the page anyway
     }

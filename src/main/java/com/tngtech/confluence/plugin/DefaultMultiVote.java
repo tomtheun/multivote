@@ -17,7 +17,7 @@ import com.tngtech.confluence.plugin.data.ItemKey;
 import com.tngtech.confluence.plugin.data.VoteItem;
 
 public class DefaultMultiVote implements MultiVote {
-    protected ContentPropertyManager contentPropertyManager;
+    private ContentPropertyManager contentPropertyManager;
     private UserAccessor userAccessor;
     private ClusterManager clusterManager;
 

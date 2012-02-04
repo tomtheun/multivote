@@ -15,11 +15,52 @@ public class VoteItem implements Comparable<VoteItem> {
 
     @Override
     public int compareTo(VoteItem other) {
-        int audience2 = other.getAudience().size();
-        int audience1 = this.getAudience().size();
-        if (audience1 < audience2)
+        if (this.equals(other)) {
+            return 0;
+        }
+        int audience2 = other.getAudienceCount();
+        int audience1 = this.getAudienceCount();
+        if (audience1 < audience2) {
             return 1;
+        }
         return -1;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((audience == null) ? 0 : audience.hashCode());
+        result = prime * result + ((fields == null) ? 0 : fields.hashCode());
+        result = prime * result + ((idName == null) ? 0 : idName.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        VoteItem other = (VoteItem) obj;
+        if (audience == null) {
+            if (other.audience != null)
+                return false;
+        } else if (!audience.equals(other.audience))
+            return false;
+        if (fields == null) {
+            if (other.fields != null)
+                return false;
+        } else if (!fields.equals(other.fields))
+            return false;
+        if (idName == null) {
+            if (other.idName != null)
+                return false;
+        } else if (!idName.equals(other.idName))
+            return false;
+        return true;
     }
 
     public VoteItem(String idName, Set<String> audience) {

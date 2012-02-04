@@ -9,7 +9,7 @@ import com.atlassian.confluence.plugin.functest.helper.SpaceHelper;
 public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCase {
     private long idOfPageContainingMacro;
     private static final String MACROSTRING = "multivote";
-    private static final String header = "|| id || name || author || description ||\n";
+    private static final String HEADER = "|| id || name || author || description ||\n";
 
     // personalize to talk
     protected static final String ITEM_ID = "1000";
@@ -25,7 +25,7 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
 
     private static String buildContent(String tableId) {
         return //"{table-plus:sortDescending=true|sortColumn=4}" +
-            "{" + MACROSTRING + ":" + tableId + "}" + "\n" + header + "|" + ITEM_ID
+            "{" + MACROSTRING + ":" + tableId + "}" + "\n" + HEADER + "|" + ITEM_ID
 	        + " | Column1 | Column2 | Column3 |\n{" + MACROSTRING + "}"
 	        //+ "{table-plus}"
 	        ;
@@ -119,7 +119,7 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
         assertNoVote(TABLE_ID2);
 
         clickVoteLink(TABLE_ID1);
-        Thread.sleep(1000);
+        Thread.sleep(1000); // TODO
 
         assertNoVote(TABLE_ID1);
         assertNoVote(TABLE_ID2);
