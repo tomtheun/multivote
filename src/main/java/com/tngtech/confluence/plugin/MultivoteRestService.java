@@ -52,8 +52,8 @@ public class MultivoteRestService {
     @Produces({MediaType.APPLICATION_JSON})
     @Path("/record/{pageId}/{tableId}")
     public Response voteInterested(
-			             @PathParam("pageId") String pageId,
-			             @PathParam("tableId") String tableId,
+                         @PathParam("pageId") String pageId,
+                         @PathParam("tableId") String tableId,
                          @QueryParam("interested") Boolean interested,
                          @QueryParam("itemId") String itemId,
                          @Context AuthenticationContext authenticationContext) {

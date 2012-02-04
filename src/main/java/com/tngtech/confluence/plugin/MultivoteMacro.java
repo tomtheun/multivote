@@ -101,7 +101,7 @@ public class MultivoteMacro extends BaseMacro {
             String requestItem = request.getParameter("multivote.idname");
             String requestUse = request.getParameter("multivote.interested");
             if (tableId.equals(request.getParameter("multivote.tableId"))) {
-	            multiVote.recordInterest(remoteUser, Boolean.parseBoolean(requestUse), new ItemKey(contentObject, tableId, requestItem));
+                multiVote.recordInterest(remoteUser, Boolean.parseBoolean(requestUse), new ItemKey(contentObject, tableId, requestItem));
             }
         }
     }

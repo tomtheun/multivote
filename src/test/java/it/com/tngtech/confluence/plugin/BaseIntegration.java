@@ -26,9 +26,9 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
     private static String buildContent(String tableId) {
         return //"{table-plus:sortDescending=true|sortColumn=4}" +
             "{" + MACROSTRING + ":" + tableId + "}" + "\n" + HEADER + "|" + ITEM_ID
-	        + " | Column1 | Column2 | Column3 |\n{" + MACROSTRING + "}"
-	        //+ "{table-plus}"
-	        ;
+            + " | Column1 | Column2 | Column3 |\n{" + MACROSTRING + "}"
+            //+ "{table-plus}"
+            ;
     }
 
     private static String audienceXpath(String tableId) {

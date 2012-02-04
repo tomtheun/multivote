@@ -37,7 +37,7 @@ public class DefaultMultiVote implements MultiVote {
         ClusteredLock lock = getLock(key);
         try {
             lock.lock();
-	        doRecordInterest(remoteUser, requestUse, key);
+            doRecordInterest(remoteUser, requestUse, key);
         } finally {
             if (lock != null) {
                 lock.unlock();
