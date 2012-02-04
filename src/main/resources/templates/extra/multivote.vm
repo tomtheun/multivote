@@ -10,7 +10,7 @@
 </fieldset>
 
 <table class="grid" data-tableid="$tableId">
-	<thead><!-- TODO -->
+	<thead>
 	    <tr>
             #foreach ( $header in $headers )
                 <th>$header</th>
@@ -24,8 +24,12 @@
 	    #set ($interested = $item.isInterested($req.remoteUser))
 	    #if ($interested)
 	        #set ($classIntr = "interested")
+            #set ($invInterested = "false")
+            #set ($image = "checkbox_checked")
 	    #else
 	        #set ($classIntr = "notInterested")
+            #set ($invInterested = "true")
+            #set ($image = "checkbox_unchecked")
 	    #end
 	    <tr class=$classIntr>
 	        #foreach ( $field in $item.getFields() )
@@ -33,15 +37,12 @@
 	        #end
 	        <td id="audience.$generalUtil.urlEncode($item.idName)" title="$multiVote.getUserFullNamesAsString($item.audience)">$item.audienceCount</td>
 	        <td align="center">
-	            #if ($interested)
-	                <a id="multivote.$generalUtil.urlEncode($item.idName)" data-interest="false" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&multivote.tableId=$generalUtil.urlEncode($tableId)&multivote.idname=$generalUtil.urlEncode($item.idName)&multivote.interested=false" >
-	                   <img src="$req.contextPath/$resPath/checkbox_checked.png" width=20 border=0 align="absmiddle">
-	               </a>
-	            #else
-	                <a id="multivote.$generalUtil.urlEncode($item.idName)" data-interest="true" href="${req.contextPath}$generalUtil.customGetPageUrl($content)&multivote.tableId=$generalUtil.urlEncode($tableId)&multivote.idname=$generalUtil.urlEncode($item.idName)&multivote.interested=true" >
-	                  <img src="$req.contextPath/$resPath/checkbox_unchecked.png" width=20 border=0 align="absmiddle">
-	                </a>
-	            #end
+                <form action="${req.contextPath}$generalUtil.customGetPageUrl($content)" method="post">
+                    <input type="hidden" name="multivote.tableId" value="$generalUtil.urlEncode($tableId)" />
+                    <input type="hidden" name="multivote.idname" value="$generalUtil.urlEncode($item.idName)" />
+                    <input type="hidden" name="multivote.interested" value="$invInterested" />
+                    <input type="image" id="multivote.$generalUtil.urlEncode($item.idName)" data-interest="$invInterested" src="$req.contextPath/$resPath/${image}.png" width=20 border=0 align="absmiddle" />
+                </form>
 	        </td>
 	    </tr>
 	#end

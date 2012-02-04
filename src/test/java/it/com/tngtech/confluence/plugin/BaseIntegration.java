@@ -40,7 +40,7 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
     }
 
     protected static String voteLink(String tableId) {
-        return "//table[@data-tableid='"+ tableId +"']//a[@id='" + LINK_ID + ITEM_ID + "']";
+        return "//table[@data-tableid='"+ tableId +"']//input[@id='" + LINK_ID + ITEM_ID + "']";
     }
 
     protected void setUp() throws Exception {

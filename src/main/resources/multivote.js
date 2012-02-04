@@ -5,7 +5,7 @@
     "use strict";
     $(function () {
         var pageId = AJS.params.multivotePageId,
-            interestedLink = $("a[ id ^= 'multivote']"),
+            interestedLink = $("input[ id ^= 'multivote']"),
             getInterestImage = function (interested) {
                 if (interested) {
                     return AJS.params.interestedImage;
@@ -18,13 +18,13 @@
             var that = $(this),
                 itemId = that.attr("id").replace(/[^0-9]/g, ""),
                 interested = (that.attr("data-interest") === "true"),
-                audience = that.parent().parent().find("td[ id ^= 'audience']"),
-                tableId = that.parent().parent().parent().parent().attr("data-tableid"),
+                line = that.parent().parent().parent(),
+                audience = line.find("td[ id ^= 'audience']"),
+                tableId = line.parent().parent().attr("data-tableid"),
                 contextPath = AJS.params.contextPath,
-                img = that.find("img"),
                 url;
 
-            if (typeof(contextPath) === undefined) {
+            if (typeof contextPath === undefined) {
                 contextPath = "";
             }
 
@@ -39,20 +39,20 @@
                 type:"POST", dataType:"json", url:url, data:"",
                 timeout:10000,
                 beforeSend:function () {
-                    img.attr("src", AJS.params.progressImage);
+                    that.attr("src", AJS.params.progressImage);
                 },
                 error:function () {
-                    img.attr("src", getInterestImage(!interested));
+                    that.attr("src", getInterestImage(!interested));
                 },
                 success:function (data) {
                     that.attr("data-interest", !interested);
-                    img.attr("src", getInterestImage(interested));
+                    that.attr("src", getInterestImage(interested));
                     audience.text(data.userNo);
                     audience.attr("title", data.users);
                     if (interested) {
-                        that.parent().parent().attr("class", "interested");
+                        line.attr("class", "interested");
                     } else {
-                        that.parent().parent().attr("class", "notInterested");
+                        line.attr("class", "notInterested");
                     }
                 }
             });
