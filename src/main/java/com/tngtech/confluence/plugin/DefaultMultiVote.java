@@ -1,25 +1,19 @@
 package com.tngtech.confluence.plugin;
 
-import static jodd.lagarto.dom.jerry.Jerry.jerry;
-
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-
-import jodd.lagarto.dom.Node;
-import jodd.lagarto.dom.jerry.Jerry;
-import jodd.lagarto.dom.jerry.JerryFunction;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.atlassian.confluence.cluster.ClusterManager;
 import com.atlassian.confluence.cluster.ClusteredLock;
-import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.core.ContentPropertyManager;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.user.User;
+import com.tngtech.confluence.plugin.data.ItemKey;
 import com.tngtech.confluence.plugin.data.VoteItem;
 
 public class DefaultMultiVote implements MultiVote {
@@ -39,52 +33,11 @@ public class DefaultMultiVote implements MultiVote {
         this.clusterManager = clusterManager;
     }
 
-    public List<String> buildHeadersFromBody(final String tableId, String body) {
-        List<String> header = new ArrayList<String>();
-
-        final Jerry xhtml = jerry(body);
-        final Jerry lines = xhtml.$("table").find("tr");
-
-        for (Node node: lines.first().children().gt(0).get()) {
-            header.add(node.getInnerHtml());
-        }
-
-        return header;
-    }
-
-    public List<VoteItem> buildItemsFromBody(final ContentEntityObject page, final String tableId, String body) {
-	    final List<VoteItem> items = new ArrayList<VoteItem>();
-        final Jerry xhtml = jerry(body);
-        final Jerry lines = xhtml.$("table").find("tr");
-
-        lines.gt(0).each(new JerryFunction() {
-            private String innerHtml(Jerry it, int index) {
-                return it.get(index).getInnerHtml().trim();
-            }
-
-            @Override
-            public boolean onNode(Jerry $this, int index) {
-                Jerry children = $this.children();
-                List<String> fields = new ArrayList<String>();
-
-                String itemId = children.get(0).getTextContent().trim();
-                for (int i=1; i<children.length(); i++) {
-                    fields.add(innerHtml(children, i));
-                }
-
-                VoteItem item = new VoteItem(itemId, fields, retrieveAudience(page, tableId, itemId));
-                items.add(item);
-                return true;
-            }
-        });
-        return items;
-    }
-
-    public void recordInterest(String remoteUser, boolean requestUse, ContentEntityObject page, String tableId, String itemId) {
-        ClusteredLock lock = clusterManager.getClusteredLock("multivote.lock." + tableId + "." + itemId);
+    public void recordInterest(String remoteUser, boolean requestUse, ItemKey key) {
+        ClusteredLock lock = getLock(key);
         try {
             lock.lock();
-	        doRecordInterest(remoteUser, requestUse, page, tableId, itemId);
+	        doRecordInterest(remoteUser, requestUse, key);
         } finally {
             if (lock != null) {
                 lock.unlock();
@@ -92,25 +45,29 @@ public class DefaultMultiVote implements MultiVote {
         }
     }
 
-    private void doRecordInterest(String user, Boolean requestUse, ContentEntityObject page, String tableId, String itemId) {
+    private ClusteredLock getLock(ItemKey key) {
+        return clusterManager.getClusteredLock("multivote.lock." + key.getTableId() + "." + key.getItemId());
+    }
+
+    private void doRecordInterest(String user, Boolean requestUse, ItemKey key) {
         boolean changed;
-        Set<String> users = retrieveAudience(page, tableId, itemId);
+        Set<String> users = retrieveAudience(key);
         if (requestUse) {
             changed = users.add(user);
         } else {
             changed = users.remove(user);
         }
         if (changed) {
-            persistAudience(page, tableId, itemId, users);
+            persistAudience(key, users);
         }
     }
 
-    private Set<String> retrieveAudience(ContentEntityObject page, String tableId, String itemId) {
-        String usersAsString = contentPropertyManager.getTextProperty(page, buildPropertyString(tableId, itemId));
+    public Set<String> retrieveAudience(ItemKey key) {
+        String usersAsString = contentPropertyManager.getTextProperty(key.getPage(), buildPropertyString(key.getTableId(), key.getItemId()));
         if (usersAsString == null) {
             usersAsString = "";
         }
-        Set<String> users = new HashSet<String>();
+        Set<String> users = new TreeSet<String>();
         StringTokenizer userTokenizer = new StringTokenizer(usersAsString, ",");
         while (userTokenizer.hasMoreTokens()) {
             users.add(userTokenizer.nextToken().trim());
@@ -118,17 +75,17 @@ public class DefaultMultiVote implements MultiVote {
         return users;
     }
 
-    private void persistAudience(ContentEntityObject page, String tableId, String itemId, Set<String> users) {
-        String property = buildPropertyString(tableId, itemId);
-        contentPropertyManager.setTextProperty(page, property, StringUtils.join(users, ", "));
+    private void persistAudience(ItemKey key, Set<String> users) {
+        String property = buildPropertyString(key.getTableId(), key.getItemId());
+        contentPropertyManager.setTextProperty(key.getPage(), property, StringUtils.join(users, ", "));
     }
 
     String buildPropertyString(String tableId, String itemId) {
         return "multivote." + tableId + "." + itemId;
     }
 
-    public VoteItem retrieveItem(ContentEntityObject page, String tableId, String itemId) {
-        return new VoteItem(itemId, retrieveAudience(page, tableId, itemId));
+    public VoteItem retrieveItem(ItemKey key) {
+        return new VoteItem(key.getItemId(), retrieveAudience(key));
     }
 
     public String getUserFullNamesAsString(Set<String> audience) {
@@ -143,10 +100,10 @@ public class DefaultMultiVote implements MultiVote {
     private String getFullName(String userName) {
         String fullName = userName;
         User user = userAccessor.getUser(userName);
-        if (null != user) {
+        if (user != null) {
             fullName = user.getFullName();
         }
-        if (null == fullName) {
+        if (fullName == null) {
             fullName = userName;
         }
         return fullName;

@@ -20,6 +20,7 @@ import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.plugins.rest.common.security.AuthenticationContext;
 import com.atlassian.spring.container.ContainerManager;
+import com.tngtech.confluence.plugin.data.ItemKey;
 import com.tngtech.confluence.plugin.data.VoteItem;
 import com.tngtech.confluence.plugin.data.VoteResponse;
 
@@ -64,9 +65,10 @@ public class MultivoteRestService {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
-        multiVote.recordInterest(user, interested, page, tableId, itemId);
+        ItemKey itemKey = new ItemKey(page, tableId, itemId);
+        multiVote.recordInterest(user, interested, itemKey);
 
-        VoteItem item = multiVote.retrieveItem(page, tableId, itemId);
+        VoteItem item = multiVote.retrieveItem(itemKey);
         String userFullNamesAsString = multiVote.getUserFullNamesAsString(item.getAudience());
         return Response.ok(new VoteResponse(itemId, userFullNamesAsString, item.getAudienceCount())).build();
     }

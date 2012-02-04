@@ -60,6 +60,12 @@
         </dependency>
         <!-- rest -->
         <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <version>1.2.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jodd</groupId>
             <artifactId>jodd-wot</artifactId>
             <version>3.3</version>
