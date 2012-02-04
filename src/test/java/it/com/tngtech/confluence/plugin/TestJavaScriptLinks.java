@@ -17,7 +17,7 @@ public class TestJavaScriptLinks extends BaseIntegration {
         super.setUp();
 
         selenium = seleniumClient();
-        final PageHelper pageHelper = createTechDayTable();
+        final PageHelper pageHelper = createMultivoteTable();
         selenium.open("pages/viewpage.action?pageId=" + pageHelper.getId());
         //if (need_login)??
         seleniumLogin();

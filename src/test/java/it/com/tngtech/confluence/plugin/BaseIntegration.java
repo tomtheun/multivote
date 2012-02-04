@@ -54,13 +54,13 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
         spaceHelper.delete(); // if it fails, we're fine
 
         spaceHelper.setName("Test Space");
-        spaceHelper.setDescription("Test Space For TechDay Macro");
+        spaceHelper.setDescription("Test Space For Multivote Macro");
 
         assertTrue(spaceHelper.create());
 
         pageHelper = getPageHelper();
         pageHelper.setSpaceKey(spaceHelper.getKey());
-        pageHelper.setTitle("Techday Macro Test");
+        pageHelper.setTitle("Multivote Macro Test");
         pageHelper.setContent(StringUtils.EMPTY);
 
         assertTrue(pageHelper.create());
@@ -73,7 +73,7 @@ public abstract class BaseIntegration extends AbstractConfluencePluginWebTestCas
         super.tearDown();
     }
 
-    public PageHelper createTechDayTable() {
+    public PageHelper createMultivoteTable() {
         final PageHelper pageHelper = getPageHelper(idOfPageContainingMacro);
 
         assertTrue(pageHelper.read());

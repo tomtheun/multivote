@@ -49,15 +49,15 @@ public class MultivoteRestService {
 
     @POST
     @Produces({MediaType.APPLICATION_JSON})
-    @Path("/record/{techdayMacroPageId}/{tableId}")
+    @Path("/record/{pageId}/{tableId}")
     public Response voteInterested(
-			             @PathParam("techdayMacroPageId") String techdayMacroPageId,
+			             @PathParam("pageId") String pageId,
 			             @PathParam("tableId") String tableId,
                          @QueryParam("interested") Boolean interested,
                          @QueryParam("itemId") String itemId,
                          @Context AuthenticationContext authenticationContext) {
         String user = getUser(authenticationContext);
-        Page page = pageManager.getPage((long)Integer.parseInt(techdayMacroPageId));
+        Page page = pageManager.getPage((long)Integer.parseInt(pageId));
 
         if (user == null || !permissionManager.hasPermission(userAccessor.getUser(user), Permission.VIEW, page)) {
             log.error("Request from unauthenticated/unauthorized user");

@@ -7,7 +7,7 @@ public class TestStaticLinks extends BaseIntegration {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        final PageHelper pageHelper = createTechDayTable();
+        final PageHelper pageHelper = createMultivoteTable();
         gotoPage("/pages/viewpage.action?pageId=" + pageHelper.getId());
     }
 

@@ -16,11 +16,8 @@ import com.atlassian.renderer.v2.macro.BaseMacro;
 import com.atlassian.renderer.v2.macro.MacroException;
 import com.opensymphony.webwork.ServletActionContext;
 
-/**
- * This class provides the simple functionality of the techday planning plugin.
- */
 public class MultivoteMacro extends BaseMacro {
-    //private static final Category log = Logger.getLogger(TechdayMacro.class);
+    //private static final Category log = Logger.getLogger(MultiVoteMacro.class);
     protected ContentPropertyManager contentPropertyManager;
 
     protected WikiStyleRenderer wikiStyleRenderer;

@@ -123,10 +123,6 @@ public class DefaultMultiVote implements MultiVote {
         contentPropertyManager.setTextProperty(page, property, StringUtils.join(users, ", "));
     }
 
-    static String buildMigrationPropertyString(String idName) {
-        return "techday." + idName;
-    }
-
     String buildPropertyString(String tableId, String idName) {
         return "multivote." + tableId + "." + idName;
     }
