@@ -67,12 +67,12 @@ public class DefaultMultiVote implements MultiVote {
                 Jerry children = $this.children();
                 List<String> fields = new ArrayList<String>();
 
-                String idName = children.get(0).getTextContent().trim();
+                String itemId = children.get(0).getTextContent().trim();
                 for (int i=1; i<children.length(); i++) {
                     fields.add(innerHtml(children, i));
                 }
 
-                VoteItem item = new VoteItem(idName, fields, retrieveAudience(page, tableId, idName));
+                VoteItem item = new VoteItem(itemId, fields, retrieveAudience(page, tableId, itemId));
                 items.add(item);
                 return true;
             }
@@ -92,21 +92,21 @@ public class DefaultMultiVote implements MultiVote {
         }
     }
 
-    private void doRecordInterest(String user, Boolean requestUse, ContentEntityObject page, String tableId, String id) {
+    private void doRecordInterest(String user, Boolean requestUse, ContentEntityObject page, String tableId, String itemId) {
         boolean changed;
-        Set<String> users = retrieveAudience(page, tableId, id);
+        Set<String> users = retrieveAudience(page, tableId, itemId);
         if (requestUse) {
             changed = users.add(user);
         } else {
             changed = users.remove(user);
         }
         if (changed) {
-            persistAudience(page, tableId, id, users);
+            persistAudience(page, tableId, itemId, users);
         }
     }
 
-    private Set<String> retrieveAudience(ContentEntityObject page, String tableId, String idName) {
-        String usersAsString = contentPropertyManager.getTextProperty(page, buildPropertyString(tableId, idName));
+    private Set<String> retrieveAudience(ContentEntityObject page, String tableId, String itemId) {
+        String usersAsString = contentPropertyManager.getTextProperty(page, buildPropertyString(tableId, itemId));
         if (usersAsString == null) {
             usersAsString = "";
         }
@@ -118,13 +118,13 @@ public class DefaultMultiVote implements MultiVote {
         return users;
     }
 
-    private void persistAudience(ContentEntityObject page, String tableId, String id, Set<String> users) {
-        String property = buildPropertyString(tableId, id);
+    private void persistAudience(ContentEntityObject page, String tableId, String itemId, Set<String> users) {
+        String property = buildPropertyString(tableId, itemId);
         contentPropertyManager.setTextProperty(page, property, StringUtils.join(users, ", "));
     }
 
-    String buildPropertyString(String tableId, String idName) {
-        return "multivote." + tableId + "." + idName;
+    String buildPropertyString(String tableId, String itemId) {
+        return "multivote." + tableId + "." + itemId;
     }
 
     public VoteItem retrieveItem(ContentEntityObject page, String tableId, String itemId) {
