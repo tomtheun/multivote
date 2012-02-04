@@ -1,6 +1,6 @@
 package com.tngtech.confluence.plugin;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -92,7 +92,7 @@ public class DefaultMultiVoteTest {
     public void test_retrieveItem() {
         VoteItem item = multivote.retrieveItem(itemKey);
         verify(contentPropertyManager).getTextProperty(page, key);
-        assertThat(item.getAudienceCount(), is(0));
-        assertThat(item.getAudience().size(), is(0));
+        assertThat(item.getAudienceCount(), equalTo(0));
+        assertThat(item.getAudience().size(), equalTo(0));
     }
 }

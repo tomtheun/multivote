@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.atlassian.confluence.velocity.htmlsafe.HtmlSafe;
 
 public class VoteItem implements Comparable<VoteItem> {
@@ -26,6 +24,7 @@ public class VoteItem implements Comparable<VoteItem> {
         return -1;
     }
 
+    // generated
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -36,6 +35,7 @@ public class VoteItem implements Comparable<VoteItem> {
         return result;
     }
 
+    // generated
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -79,10 +79,6 @@ public class VoteItem implements Comparable<VoteItem> {
 
     public int getAudienceCount() {
         return audience.size();
-    }
-
-    public String getUsersAsString() {
-        return StringUtils.join(audience, ", ");
     }
 
     public String getIdName() {

@@ -119,7 +119,7 @@ public class MultivoteMacro extends BaseMacro {
      *
      * @return list of {@link com.tngtech.confluence.plugin.data.VoteItem}
      */
-    private List<String> buildHeadersFromBody(String body) {
+    List<String> buildHeadersFromBody(String body) {
         List<String> header = new ArrayList<String>();
 
         final Jerry xhtml = jerry(body);
@@ -142,7 +142,7 @@ public class MultivoteMacro extends BaseMacro {
      * @param body of the Macro
      * @return list of {@link com.tngtech.confluence.plugin.data.VoteItem}
      */
-    private List<VoteItem> buildItemsFromBody(final ContentEntityObject page, final String tableId, String body) {
+    List<VoteItem> buildItemsFromBody(final ContentEntityObject page, final String tableId, String body) {
         final List<VoteItem> items = new ArrayList<VoteItem>();
         final Jerry xhtml = jerry(body);
         final Jerry lines = xhtml.$("table").find("tr");
