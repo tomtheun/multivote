@@ -1,12 +1,16 @@
 package com.tngtech.confluence.plugin;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.hasItems;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -89,10 +93,17 @@ public class DefaultMultiVoteTest {
     }
 
     @Test
-    public void test_retrieveItem() {
-        VoteItem item = multivote.retrieveItem(itemKey);
+    public void test_retrieveAudience_empty() {
+        Set<String> audience = multivote.retrieveAudience(itemKey);
         verify(contentPropertyManager).getTextProperty(page, key);
-        assertThat(item.getAudienceCount(), equalTo(0));
-        assertThat(item.getAudience().size(), equalTo(0));
+        assertThat(audience, hasSize(0));
+    }
+
+    @Test
+    public void test_retrieveAudience_users() {
+        when(contentPropertyManager.getTextProperty(page, key)).thenReturn("user1, user2");
+        Set<String> audience = multivote.retrieveAudience(itemKey);
+        assertThat(audience, hasSize(2));
+        assertThat(audience, hasItems("user1", "user2"));
     }
 }

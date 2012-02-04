@@ -66,10 +66,10 @@ public class MultivoteRestService {
         }
 
         ItemKey itemKey = new ItemKey(page, tableId, itemId);
-        multiVote.recordInterest(user, interested, itemKey);
 
-        VoteItem item = multiVote.retrieveItem(itemKey);
+        VoteItem item = multiVote.recordInterest(user, interested, itemKey);
         String userFullNamesAsString = multiVote.getUserFullNamesAsString(item.getAudience());
+
         return Response.ok(new VoteResponse(itemId, userFullNamesAsString, item.getAudienceCount())).build();
     }
 

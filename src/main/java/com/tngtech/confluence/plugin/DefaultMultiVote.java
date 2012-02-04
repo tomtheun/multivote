@@ -33,23 +33,25 @@ public class DefaultMultiVote implements MultiVote {
         this.clusterManager = clusterManager;
     }
 
-    public void recordInterest(String remoteUser, boolean requestUse, ItemKey key) {
+    public VoteItem recordInterest(String remoteUser, boolean requestUse, ItemKey key) {
         ClusteredLock lock = getLock(key);
+        Set<String> users;
         try {
             lock.lock();
-            doRecordInterest(remoteUser, requestUse, key);
+            users = doRecordInterest(remoteUser, requestUse, key);
         } finally {
             if (lock != null) {
                 lock.unlock();
             }
         }
+        return new VoteItem(key.getItemId(), users);
     }
 
     private ClusteredLock getLock(ItemKey key) {
         return clusterManager.getClusteredLock("multivote.lock." + key.getTableId() + "." + key.getItemId());
     }
 
-    private void doRecordInterest(String user, Boolean requestUse, ItemKey key) {
+    private Set<String> doRecordInterest(String user, Boolean requestUse, ItemKey key) {
         boolean changed;
         Set<String> users = retrieveAudience(key);
         if (requestUse) {
@@ -60,10 +62,11 @@ public class DefaultMultiVote implements MultiVote {
         if (changed) {
             persistAudience(key, users);
         }
+        return users;
     }
 
     public Set<String> retrieveAudience(ItemKey key) {
-        String usersAsString = contentPropertyManager.getTextProperty(key.getPage(), buildPropertyString(key.getTableId(), key.getItemId()));
+        String usersAsString = contentPropertyManager.getTextProperty(key.getPage(), buildPropertyString(key));
         if (usersAsString == null) {
             usersAsString = "";
         }
@@ -76,16 +79,12 @@ public class DefaultMultiVote implements MultiVote {
     }
 
     private void persistAudience(ItemKey key, Set<String> users) {
-        String property = buildPropertyString(key.getTableId(), key.getItemId());
+        String property = buildPropertyString(key);
         contentPropertyManager.setTextProperty(key.getPage(), property, StringUtils.join(users, ", "));
     }
 
-    String buildPropertyString(String tableId, String itemId) {
-        return "multivote." + tableId + "." + itemId;
-    }
-
-    public VoteItem retrieveItem(ItemKey key) {
-        return new VoteItem(key.getItemId(), retrieveAudience(key));
+    private String buildPropertyString(ItemKey key) {
+        return "multivote." + key.getTableId() + "." + key.getItemId();
     }
 
     public String getUserFullNamesAsString(Set<String> audience) {

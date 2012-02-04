@@ -11,14 +11,9 @@ public interface MultiVote {
      * @param user that votes
      * @param interest
      * @param key identifying the vote Item
+     * @return the Item that was voted for
      */
-    void recordInterest(String user, boolean interest, ItemKey key);
-
-    /**
-     * retrieve a vote Item
-     * @param key identifying the vote Item
-     */
-    VoteItem retrieveItem(ItemKey key);
+    VoteItem recordInterest(String user, boolean interest, ItemKey key);
 
     /**
      * retrieve the Audience of an item

@@ -1,11 +1,11 @@
-#set($resPath="download/resources/com.tngtech.confluence.plugin.multivote:resources") <!-- TODO read from property? -->
+#set($resourcePath="download/resources/com.tngtech.confluence.plugin.multivote:resources") <!-- TODO read from property? -->
 #requireResource("confluence.web.resources:jquery")
 #requireResource("com.tngtech.confluence.plugin.multivote:resources")
 <fieldset class="hidden parameters">
     <input type="hidden" id="multivotePageId" value="$content.getIdAsString()"/>
-    <input type="hidden" id="notInterestedImage" value="$req.contextPath/$resPath/checkbox_unchecked.png" />
-    <input type="hidden" id="interestedImage" value="$req.contextPath/$resPath/checkbox_checked.png" />
-    <input type="hidden" id="progressImage" value="$req.contextPath/$resPath/roller.gif" />
+    <input type="hidden" id="notInterestedImage" value="$req.contextPath/$resourcePath/checkbox_unchecked.png" />
+    <input type="hidden" id="interestedImage" value="$req.contextPath/$resourcePath/checkbox_checked.png" />
+    <input type="hidden" id="progressImage" value="$req.contextPath/$resourcePath/roller.gif" />
 </fieldset>
 
 <table class="grid" data-tableid="$tableId">
