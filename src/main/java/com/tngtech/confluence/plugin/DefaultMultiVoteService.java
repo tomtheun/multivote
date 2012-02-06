@@ -17,22 +17,6 @@ import com.tngtech.confluence.plugin.data.ItemKey;
 import com.tngtech.confluence.plugin.data.VoteItem;
 
 public class DefaultMultiVoteService implements MultiVoteService {
-    private ContentPropertyManager contentPropertyManager;
-    private UserAccessor userAccessor;
-    private ClusterManager clusterManager;
-
-    public void setContentPropertyManager(ContentPropertyManager contentPropertyManager) {
-        this.contentPropertyManager = contentPropertyManager;
-    }
-
-    public void setUserAccessor(UserAccessor userAccessor) {
-        this.userAccessor = userAccessor;
-    }
-
-    public void setClusterManager(ClusterManager clusterManager) {
-        this.clusterManager = clusterManager;
-    }
-
     public VoteItem recordInterest(String remoteUser, boolean requestUse, ItemKey key) {
         ClusteredLock lock = getLock(key);
         Set<String> users;
@@ -106,5 +90,24 @@ public class DefaultMultiVoteService implements MultiVoteService {
             fullName = userName;
         }
         return fullName;
+    }
+    
+    /*
+     * injected Services
+     */
+    private ContentPropertyManager contentPropertyManager;
+    private UserAccessor userAccessor;
+    private ClusterManager clusterManager;
+
+    public void setContentPropertyManager(ContentPropertyManager contentPropertyManager) {
+        this.contentPropertyManager = contentPropertyManager;
+    }
+
+    public void setUserAccessor(UserAccessor userAccessor) {
+        this.userAccessor = userAccessor;
+    }
+
+    public void setClusterManager(ClusterManager clusterManager) {
+        this.clusterManager = clusterManager;
     }
 }

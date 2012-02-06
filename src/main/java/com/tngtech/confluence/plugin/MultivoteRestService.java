@@ -27,6 +27,47 @@ import com.tngtech.confluence.plugin.data.VoteResponse;
 @Path("/vote")
 public class MultivoteRestService {
     private static final Logger log = Logger.getLogger(MultivoteRestService.class);
+
+    @POST
+    @Produces({MediaType.APPLICATION_JSON})
+    @Path("/record/{pageId}/{tableId}")
+    public Response voteInterested(
+                         @PathParam("pageId") String pageId,
+                         @PathParam("tableId") String tableId,
+                         @QueryParam("interested") Boolean interested,
+                         @QueryParam("itemId") String itemId,
+                         @Context AuthenticationContext authenticationContext) {
+        String user = getUser(authenticationContext);
+        Page page = pageManager.getPage((long)Integer.parseInt(pageId));
+
+        if (userNotPermitted(user, page)) {
+            log.error("Request from unauthenticated/unauthorized user");
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+        ItemKey itemKey = new ItemKey(page, tableId, itemId);
+
+        VoteItem item = multiVote.recordInterest(user, interested, itemKey);
+        String userFullNamesAsString = multiVote.getUserFullNamesAsString(item.getAudience());
+
+        return Response.ok(new VoteResponse(itemId, userFullNamesAsString, item.getAudienceCount())).build();
+    }
+
+    private boolean userNotPermitted(String user, Page page) {
+        return user == null || !permissionManager.hasPermission(userAccessor.getUser(user), Permission.VIEW, page);
+    }
+
+    private String getUser(AuthenticationContext context) {
+        final Principal principal = context.getPrincipal();
+        if (principal != null) {
+            return principal.getName();
+        }
+        return null;
+    }
+    
+    /*
+     * injected Services
+     */
     private PageManager pageManager;
     private UserAccessor userAccessor;
     private PermissionManager permissionManager;
@@ -46,38 +87,5 @@ public class MultivoteRestService {
 
     public void setPageManager(PageManager pageManager) {
         this.pageManager = pageManager;
-    }
-
-    @POST
-    @Produces({MediaType.APPLICATION_JSON})
-    @Path("/record/{pageId}/{tableId}")
-    public Response voteInterested(
-                         @PathParam("pageId") String pageId,
-                         @PathParam("tableId") String tableId,
-                         @QueryParam("interested") Boolean interested,
-                         @QueryParam("itemId") String itemId,
-                         @Context AuthenticationContext authenticationContext) {
-        String user = getUser(authenticationContext);
-        Page page = pageManager.getPage((long)Integer.parseInt(pageId));
-
-        if (user == null || !permissionManager.hasPermission(userAccessor.getUser(user), Permission.VIEW, page)) {
-            log.error("Request from unauthenticated/unauthorized user");
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        }
-
-        ItemKey itemKey = new ItemKey(page, tableId, itemId);
-
-        VoteItem item = multiVote.recordInterest(user, interested, itemKey);
-        String userFullNamesAsString = multiVote.getUserFullNamesAsString(item.getAudience());
-
-        return Response.ok(new VoteResponse(itemId, userFullNamesAsString, item.getAudienceCount())).build();
-    }
-
-    private String getUser(AuthenticationContext context) {
-        final Principal principal = context.getPrincipal();
-        if (principal != null) {
-            return principal.getName();
-        }
-        return null;
     }
 }

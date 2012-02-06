@@ -57,7 +57,7 @@ public class MultivoteMacro extends BaseMacro {
 
         try {
 	        recordVote(page, tableId);
-	        return render(page, tableId, body, shouldSort);
+	        return render(page, body, tableId, shouldSort);
         } catch (Exception e) {
             throw new MacroException(e);
         }
@@ -75,10 +75,10 @@ public class MultivoteMacro extends BaseMacro {
         }
     }
 
-    private String render(ContentEntityObject page, String tableId, String table, String shouldSort) {
-        List<VoteItem> items = buildItemsFromBody(page, tableId, table);
+    private String render(ContentEntityObject page, String body, String tableId, String shouldSort) {
+        List<VoteItem> items = buildItemsFromBody(page, tableId, body);
         sortIf(shouldSort, items);
-        List<String> headers = buildHeadersFromBody(table);
+        List<String> headers = buildHeadersFromBody(body);
         Map<String, Object> contextMap = MacroUtils.defaultVelocityContext();
 
         contextMap.put("items", items);
