@@ -7,10 +7,6 @@
 
     <resource type="i18n" name="i18n" location="AtlassianPlugin" />
 
-    <component key='multivote-service' class="${project.groupId}.DefaultMultiVote" name="Multivote Service">
-        <interface>${project.groupId}.MultiVote</interface>
-    </component>
-
     <macro name='multivote' class='${project.groupId}.MultivoteMacro'
         key='multivote'>
         <resource type="velocity" name="help" location="templates/multivote-help.vm">
@@ -23,6 +19,10 @@
             </parameter>
         </parameters>
     </macro>
+    
+    <component key='multivote-service' class="${project.groupId}.DefaultMultiVoteService" name="Multivote Service">
+        <interface>${project.groupId}.MultiVoteService</interface>
+    </component>
 
     <rest key="rest-service-resources" path="/multivote" version="0.1">
         <description>rest service for ajax requests for the multivote macro</description>

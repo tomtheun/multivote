@@ -18,7 +18,6 @@ import com.atlassian.confluence.renderer.PageContext;
 import com.atlassian.confluence.renderer.radeox.macros.MacroUtils;
 import com.atlassian.confluence.util.velocity.VelocityUtils;
 import com.atlassian.renderer.RenderContext;
-import com.atlassian.renderer.WikiStyleRenderer;
 import com.atlassian.renderer.v2.RenderMode;
 import com.atlassian.renderer.v2.macro.BaseMacro;
 import com.atlassian.renderer.v2.macro.MacroException;
@@ -27,14 +26,12 @@ import com.tngtech.confluence.plugin.data.ItemKey;
 import com.tngtech.confluence.plugin.data.VoteItem;
 
 public class MultivoteMacro extends BaseMacro {
+    private static final String TEMPLATE = "templates/extra/multivote.vm";
     //private static final Category log = Logger.getLogger(MultiVoteMacro.class);
-    private WikiStyleRenderer wikiStyleRenderer;
-    private MultiVote multiVote;
-
-    public void setMultiVote(MultiVote multiVote) {
-        this.multiVote = multiVote;
-    }
-
+    
+    /*
+     * config
+     */
     public boolean isInline() {
         return false;
     }
@@ -44,7 +41,7 @@ public class MultivoteMacro extends BaseMacro {
     }
 
     public RenderMode getBodyRenderMode() {
-        return RenderMode.NO_RENDER;
+        return RenderMode.ALL;
     }
 
     /**
@@ -54,46 +51,18 @@ public class MultivoteMacro extends BaseMacro {
     @Override
     public String execute(Map params, String body, RenderContext renderContext) throws MacroException {
         ContentEntityObject page = ((PageContext)renderContext).getEntity();
-
         String tableId = (String)params.get("0");
         String shouldSort = (String)params.get("sort");
         checkValidityOf(tableId);
-        recordVote(page, tableId);
-
-        Map<String, Object> contextMap = MacroUtils.defaultVelocityContext();
-
-        String table = wikiStyleRenderer.convertWikiToXHtml(renderContext, body);
-
-        List<VoteItem> items = buildItemsFromBody(page, tableId, table);
-        sort(items, shouldSort);
-
-        contextMap.put("items", items);
-        contextMap.put("tableId", tableId);
-        contextMap.put("headers", buildHeadersFromBody(table));
-        contextMap.put("content", page);
-        contextMap.put("multiVote", multiVote);
 
         try {
-            return VelocityUtils.getRenderedTemplate("templates/extra/multivote.vm", contextMap);
+	        recordVote(page, tableId);
+	        return render(page, tableId, body, shouldSort);
         } catch (Exception e) {
             throw new MacroException(e);
         }
     }
-
-    private void sort(List<VoteItem> items, String sort) {
-        if ( "true".equals( sort ) ) {
-            Collections.sort(items);
-        }
-    }
-
-    private void checkValidityOf(String tableId) throws MacroException {
-        if (tableId == null) {
-            throw new MacroException("id is mandatory");
-        } else if(!tableId.matches("^\\p{Alpha}\\p{Alnum}+$")) {
-            throw new MacroException("id is only allowed to contain alphanumeric characters and has to start with a letter");
-        }
-    }
-
+    
     private void recordVote(ContentEntityObject contentObject, String tableId) {
         HttpServletRequest request = ServletActionContext.getRequest();
         if (request != null) {
@@ -106,8 +75,32 @@ public class MultivoteMacro extends BaseMacro {
         }
     }
 
-    public void setWikiStyleRenderer(WikiStyleRenderer wikiStyleRenderer) {
-        this.wikiStyleRenderer = wikiStyleRenderer;
+    private String render(ContentEntityObject page, String tableId, String table, String shouldSort) {
+        List<VoteItem> items = buildItemsFromBody(page, tableId, table);
+        sortIf(shouldSort, items);
+        List<String> headers = buildHeadersFromBody(table);
+        Map<String, Object> contextMap = MacroUtils.defaultVelocityContext();
+
+        contextMap.put("items", items);
+        contextMap.put("tableId", tableId);
+        contextMap.put("headers", headers);
+        contextMap.put("content", page);
+        contextMap.put("multiVote", multiVote);
+        return VelocityUtils.getRenderedTemplate(TEMPLATE, contextMap);
+    }
+
+    private void sortIf(String shouldSort, List<VoteItem> items) {
+        if ( "true".equals( shouldSort ) ) {
+            Collections.sort(items);
+        }
+    }
+
+    private void checkValidityOf(String tableId) throws MacroException {
+        if (tableId == null) {
+            throw new MacroException("id is mandatory");
+        } else if(!tableId.matches("^\\p{Alpha}\\p{Alnum}+$")) {
+            throw new MacroException("id is only allowed to contain alphanumeric characters and has to start with a letter");
+        }
     }
 
     /**
@@ -146,27 +139,32 @@ public class MultivoteMacro extends BaseMacro {
         final List<VoteItem> items = new ArrayList<VoteItem>();
         final Jerry xhtml = jerry(body);
         final Jerry lines = xhtml.$("table").find("tr");
-
+        
         lines.gt(0).each(new JerryFunction() {
-            private String innerHtml(Jerry it, int index) {
-                return it.get(index).getInnerHtml().trim();
-            }
-
             @Override
             public boolean onNode(Jerry me, int index) {
                 Jerry children = me.children();
-                List<String> fields = new ArrayList<String>();
+                final List<String> fields = new ArrayList<String>();
 
                 String itemId = children.get(0).getTextContent().trim();
-                for (int i=1; i<children.length(); i++) {
-                    fields.add(innerHtml(children, i));
-                }
-
+                
+		        for (Node node: children.gt(0).get()) {
+		            fields.add(node.getInnerHtml().trim());
+		        }
+		        
                 VoteItem item = new VoteItem(itemId, fields, multiVote.retrieveAudience(new ItemKey(page, tableId, itemId)));
                 items.add(item);
                 return true;
             }
         });
         return items;
+    }
+    
+    /*
+     * injected Services
+     */
+    private MultiVoteService multiVote;
+    public void setMultiVote(MultiVoteService multiVote) {
+        this.multiVote = multiVote;
     }
 }

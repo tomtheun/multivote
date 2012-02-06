@@ -30,9 +30,9 @@ public class MultivoteRestService {
     private PageManager pageManager;
     private UserAccessor userAccessor;
     private PermissionManager permissionManager;
-    private MultiVote multiVote;
+    private MultiVoteService multiVote;
 
-    public void setMultiVote(MultiVote multiVote) {
+    public void setMultiVote(MultiVoteService multiVote) {
         this.multiVote = multiVote;
     }
 

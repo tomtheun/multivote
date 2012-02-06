@@ -16,7 +16,7 @@ import com.atlassian.user.User;
 import com.tngtech.confluence.plugin.data.ItemKey;
 import com.tngtech.confluence.plugin.data.VoteItem;
 
-public class DefaultMultiVote implements MultiVote {
+public class DefaultMultiVoteService implements MultiVoteService {
     private ContentPropertyManager contentPropertyManager;
     private UserAccessor userAccessor;
     private ClusterManager clusterManager;

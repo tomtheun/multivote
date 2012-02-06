@@ -5,7 +5,7 @@ import java.util.Set;
 import com.tngtech.confluence.plugin.data.ItemKey;
 import com.tngtech.confluence.plugin.data.VoteItem;
 
-public interface MultiVote {
+public interface MultiVoteService {
     /**
      * Vote for a specific Item
      * @param user that votes

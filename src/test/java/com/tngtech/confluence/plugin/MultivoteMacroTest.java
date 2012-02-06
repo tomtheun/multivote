@@ -42,12 +42,12 @@ public class MultivoteMacroTest {
             +"</tbody></table>"
             +"</div>";
     private ContentEntityObject page;
-    private MultiVote multiVote;
+    private MultiVoteService multiVote;
 
     @Before
     public void setUp() throws Exception {
         macro = new MultivoteMacro();
-        multiVote = mock(MultiVote.class);
+        multiVote = mock(MultiVoteService.class);
         Set<String> audience = new TreeSet<String>();
         audience.add(USER_IN_AUDIENCE);
         when(multiVote.retrieveAudience((ItemKey)anyObject())).thenReturn(audience);
@@ -63,7 +63,7 @@ public class MultivoteMacroTest {
         assertThat(headers.get(1), equalTo(" header2 "));
         assertThat(headers, hasSize(2));
     }
-    
+
     @Test
     public void test_body_parsing() {
         List<VoteItem> items = macro.buildItemsFromBody(page, "tableId", body);

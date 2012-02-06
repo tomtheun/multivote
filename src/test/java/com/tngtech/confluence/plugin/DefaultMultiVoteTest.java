@@ -22,7 +22,7 @@ import com.atlassian.confluence.user.UserAccessor;
 import com.tngtech.confluence.plugin.data.ItemKey;
 
 public class DefaultMultiVoteTest {
-    private DefaultMultiVote multivote;
+    private DefaultMultiVoteService multivote;
     private ClusterManager clusterManager;
     private ContentPropertyManager contentPropertyManager;
     private UserAccessor userAccessor;
@@ -37,7 +37,7 @@ public class DefaultMultiVoteTest {
 
     @Before
     public void setUp() throws Exception {
-        multivote = new DefaultMultiVote();
+        multivote = new DefaultMultiVoteService();
         clusterManager = mock(ClusterManager.class);
         lock = mock(ClusteredLock.class);
         when(clusterManager.getClusteredLock(anyString())).thenReturn(lock);
