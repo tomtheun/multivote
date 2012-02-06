@@ -1,6 +1,5 @@
 package com.tngtech.confluence.plugin;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItems;
@@ -21,7 +20,6 @@ import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.core.ContentPropertyManager;
 import com.atlassian.confluence.user.UserAccessor;
 import com.tngtech.confluence.plugin.data.ItemKey;
-import com.tngtech.confluence.plugin.data.VoteItem;
 
 public class DefaultMultiVoteTest {
     private DefaultMultiVote multivote;
