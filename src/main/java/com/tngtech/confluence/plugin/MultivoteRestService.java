@@ -19,7 +19,6 @@ import com.atlassian.confluence.security.Permission;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.plugins.rest.common.security.AuthenticationContext;
-import com.atlassian.spring.container.ContainerManager;
 import com.tngtech.confluence.plugin.data.ItemKey;
 import com.tngtech.confluence.plugin.data.VoteItem;
 import com.tngtech.confluence.plugin.data.VoteResponse;
@@ -64,7 +63,7 @@ public class MultivoteRestService {
         }
         return null;
     }
-    
+
     /*
      * injected Services
      */
@@ -77,8 +76,8 @@ public class MultivoteRestService {
         this.multiVote = multiVote;
     }
 
-    public MultivoteRestService () {
-        this.userAccessor = (UserAccessor) ContainerManager.getInstance().getContainerContext().getComponent("userAccessor");
+    public void setUserAccessor(UserAccessor userAccessor) {
+        this.userAccessor = userAccessor;
     }
 
     public void setPermissionManager(PermissionManager permissionManager) {

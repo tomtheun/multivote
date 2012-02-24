@@ -40,7 +40,7 @@
                     <input type="hidden" name="multivote.tableId" value="$generalUtil.urlEncode($tableId)" />
                     <input type="hidden" name="multivote.idname" value="$generalUtil.urlEncode($item.idName)" />
                     <input type="hidden" name="multivote.interested" value="$invInterested" />
-                    <input type="image" id="multivote.$generalUtil.urlEncode($item.idName)" data-interest="$invInterested" src="$req.contextPath/$resPath/${image}.png" width=20 border=0 align="absmiddle" />
+                    <input type="image" id="multivote.$generalUtil.urlEncode($item.idName)" data-interest="$invInterested" src="$req.contextPath/$resourcePath/${image}.png" width=20 border=0 align="absmiddle" />
                 </form>
             </td>
         </tr>
