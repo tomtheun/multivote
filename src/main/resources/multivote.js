@@ -16,7 +16,7 @@
 
         interestedLink.click(function () {
             var that = $(this),
-                itemId = that.attr("id").replace(/[^0-9]/g, ""),
+                itemId = that.attr("id").replace(/^multivote./, ""),
                 interested = (that.attr("data-interest") === "true"),
                 line = that.parent().parent().parent(),
                 audience = line.find("td[ id ^= 'audience']"),

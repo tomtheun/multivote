@@ -26,9 +26,10 @@ import com.tngtech.confluence.plugin.data.ItemKey;
 import com.tngtech.confluence.plugin.data.VoteItem;
 
 public class MultivoteMacro extends BaseMacro {
+    private static final String VALID_ID_PATTERN = "^\\p{Alpha}\\p{Alnum}+$";
     private static final String TEMPLATE = "templates/extra/multivote.vm";
     //private static final Category log = Logger.getLogger(MultiVoteMacro.class);
-    
+
     /*
      * config
      */
@@ -56,13 +57,13 @@ public class MultivoteMacro extends BaseMacro {
         checkValidityOf(tableId);
 
         try {
-	        recordVote(page, tableId);
-	        return render(page, body, tableId, shouldSort);
+            recordVote(page, tableId);
+            return render(page, body, tableId, shouldSort);
         } catch (Exception e) {
             throw new MacroException(e);
         }
     }
-    
+
     private void recordVote(ContentEntityObject contentObject, String tableId) {
         HttpServletRequest request = ServletActionContext.getRequest();
         if (request != null) {
@@ -98,8 +99,8 @@ public class MultivoteMacro extends BaseMacro {
     private void checkValidityOf(String tableId) throws MacroException {
         if (tableId == null) {
             throw new MacroException("id is mandatory");
-        } else if(!tableId.matches("^\\p{Alpha}\\p{Alnum}+$")) {
-            throw new MacroException("id is only allowed to contain alphanumeric characters and has to start with a letter");
+        } else if(!tableId.matches(VALID_ID_PATTERN)) {
+            throw new MacroException("id is only allowed to contain alphanumeric characters and has to start with a letter, but was '" + tableId + "'");
         }
     }
 
@@ -139,7 +140,7 @@ public class MultivoteMacro extends BaseMacro {
         final List<VoteItem> items = new ArrayList<VoteItem>();
         final Jerry xhtml = jerry(body);
         final Jerry lines = xhtml.$("table").find("tr");
-        
+
         lines.gt(0).each(new JerryFunction() {
             @Override
             public boolean onNode(Jerry me, int index) {
@@ -147,19 +148,26 @@ public class MultivoteMacro extends BaseMacro {
                 final List<String> fields = new ArrayList<String>();
 
                 String itemId = children.get(0).getTextContent().trim();
-                
-		        for (Node node: children.gt(0).get()) {
-		            fields.add(node.getInnerHtml().trim());
-		        }
-		        
+                checkItemId(itemId);
+
+                for (Node node: children.gt(0).get()) {
+                    fields.add(node.getInnerHtml().trim());
+                }
+
                 VoteItem item = new VoteItem(itemId, fields, multiVote.retrieveAudience(new ItemKey(page, tableId, itemId)));
                 items.add(item);
                 return true;
             }
+
+            private void checkItemId(String itemId) {
+                if (! itemId.matches("^\\p{Alnum}+$")) {
+                    throw new MultivoteMacroException("id is only allowed to contain alphanumeric characters, but was '" + itemId + '"');
+                }
+            }
         });
         return items;
     }
-    
+
     /*
      * injected Services
      */
