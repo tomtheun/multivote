@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.tngtech.confluence.plugin</groupId>
     <artifactId>multivote</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
 
     <organization>
         <name>TNG Technology Consulting</name>
