@@ -14,9 +14,10 @@
         </resource>
         <category name="confluence-content"/>
         <parameters>
-            <parameter name="" type="string" required="true">
-                <alias name="id"/>
+            <parameter name="id" type="string" required="true">
+                <alias name=""/>
             </parameter>
+            <parameter name="sort" type="boolean" required="false" />
         </parameters>
     </macro>
     
