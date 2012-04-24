@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.tngtech.confluence.plugin</groupId>
     <artifactId>multivote</artifactId>
-    <version>0.1.2</version>
+    <version>1.0.0</version>
 
     <organization>
         <name>TNG Technology Consulting</name>
@@ -30,12 +30,6 @@
             <organization>TNG Technology Consulting GmbH</organization>
         </developer>
     </developers>
-
-    <scm>
-        <connection>scm:https://subversion.tngtech.com/internal-projects/confluence/techday-plugin/trunk</connection>
-        <developerConnection>scm:https://subversion.tngtech.com/internal-projects/confluence/techday-plugin/trunk</developerConnection>
-        <url>https://subversion.tngtech.com/internal-projects/confluence/techday-plugin/trunk</url>
-    </scm>
 
     <dependencies>
         <!-- Confluence dependencies -->
