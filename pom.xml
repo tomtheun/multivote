@@ -14,7 +14,7 @@
         <url>http://www.tngtech.com/</url>
     </organization>
 
-    <name>Multivote Plugin</name>
+    <name>Confluence Multivote Plugin</name>
     <description>Simple Confluence plugin to vote for multiple items</description>
     <packaging>atlassian-plugin</packaging>
 
