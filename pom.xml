@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.tngtech.confluence.plugin</groupId>
     <artifactId>multivote</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0-SNAPSHOT</version>
 
     <organization>
         <name>TNG Technology Consulting</name>
@@ -30,6 +30,12 @@
             <organization>TNG Technology Consulting GmbH</organization>
         </developer>
     </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:TNG/multivote.git</connection>
+        <developerConnection>scm:git:git@github.com:TNG/multivote.git</developerConnection>
+        <url>scm:git:git@github.com:TNG/multivote.git</url>
+    </scm>
 
     <dependencies>
         <!-- Confluence dependencies -->
@@ -134,7 +140,7 @@
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-confluence-plugin</artifactId>
-                <version>3.2.3</version>
+                <version>3.7.2</version>
                 <extensions>true</extensions>
                 <configuration>
                     <productVersion>${confluence.version}</productVersion>
@@ -157,12 +163,20 @@
                     <fastdevEnable>false</fastdevEnable>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.2.2</version>
+                <configuration>
+                    <pushChanges>false</pushChanges>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
     <properties>
-        <confluence.version>3.5.7</confluence.version>
-        <confluence.data.version>3.1</confluence.data.version>
+        <confluence.version>4.2.1</confluence.version>
+        <confluence.data.version>3.5</confluence.data.version>
         <downloadSources>true</downloadSources>
         <downloadJavadocs>true</downloadJavadocs>
         <confluence.plugin.bundled>true</confluence.plugin.bundled>
