@@ -1,14 +1,13 @@
 package it.com.tngtech.confluence.plugin;
 
 
-import com.atlassian.confluence.plugin.functest.helper.PageHelper;
 
 public class TestStaticLinks extends BaseIntegration {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        final PageHelper pageHelper = createMultivoteTable();
-        gotoPage("/pages/viewpage.action?pageId=" + pageHelper.getId());
+        gotoPage("display/TST/Multivote+Macro+Test");
+        ensureClean();
     }
 
     protected void refreshPage() {
@@ -29,5 +28,9 @@ public class TestStaticLinks extends BaseIntegration {
         assertEquals("", getAudience(tableId));
         assertEquals("0", getAudienceCount(tableId));
         assertEquals(getVotedLineClass(tableId), "notInterested");
+    }
+
+    protected boolean voted(String tableId) {
+        return !getAudienceCount(tableId).equals("0");
     }
 }

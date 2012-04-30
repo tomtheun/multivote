@@ -41,12 +41,6 @@
         <!-- Confluence dependencies -->
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.6</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.confluence</groupId>
             <artifactId>confluence</artifactId>
             <version>${confluence.version}</version>
@@ -63,6 +57,12 @@
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
             <version>1.2.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -144,7 +144,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <productVersion>${confluence.version}</productVersion>
-                    <productDataVersion>${confluence.data.version}</productDataVersion>
+                    <productDataPath>${basedir}/src/test/resources/generated-test-resources.zip</productDataPath>
+                    <server>localhost</server>
                 </configuration>
             </plugin>
             <plugin>
@@ -159,8 +160,8 @@
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
-                    <!-- disable fastdev, its deployment is much slower than atlas-cli.. -->
-                    <fastdevEnable>false</fastdevEnable>
+                    <fastdevEnable>false</fastdevEnable><!-- fastdev deployment is much slower than atlas-cli -->
+                    <allowGoogleTracking>false</allowGoogleTracking>
                 </configuration>
             </plugin>
             <plugin>

@@ -15,12 +15,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.atlassian.confluence.core.ContentEntityObject;
+import com.tngtech.confluence.plugin.data.Header;
 import com.tngtech.confluence.plugin.data.ItemKey;
 import com.tngtech.confluence.plugin.data.VoteItem;
 
-public class MultivoteMacroTest {
+public class MultivoteMacroServiceTest {
     private static final String USER_IN_AUDIENCE = "userInAudience";
-    private MultivoteMacro macro;
     private String body =
             "<div class='table-wrap'>"
             +"<table class='confluenceTable'><tbody>"
@@ -43,30 +43,33 @@ public class MultivoteMacroTest {
             +"</div>";
     private ContentEntityObject page;
     private MultiVoteService multiVote;
+    private MultiVoteMacroService macroService;
 
     @Before
     public void setUp() throws Exception {
-        macro = new MultivoteMacro();
+        macroService = new MultiVoteMacroService();
+
         multiVote = mock(MultiVoteService.class);
         Set<String> audience = new TreeSet<String>();
         audience.add(USER_IN_AUDIENCE);
         when(multiVote.retrieveAudience((ItemKey)anyObject())).thenReturn(audience);
-        macro.setMultiVote(multiVote);
+        macroService.setMultiVoteService(multiVote);
 
         page = mock(ContentEntityObject.class);
     }
 
     @Test
     public void test_header_parsing() {
-        List<String> headers = macro.buildHeadersFromBody(body);
-        assertThat(headers.get(0), equalTo(" header1 "));
-        assertThat(headers.get(1), equalTo(" header2 "));
+        Header header = macroService.buildHeaderFromBody(body);
+        List<String> headers = header.getColumns();
+        assertThat(headers.get(0), equalTo("header1"));
+        assertThat(headers.get(1), equalTo("header2"));
         assertThat(headers, hasSize(2));
     }
 
     @Test
     public void test_body_parsing() {
-        List<VoteItem> items = macro.buildItemsFromBody(page, "tableId", body);
+        List<VoteItem> items = macroService.buildItemsFromBody(page, "tableId", body);
 
         VoteItem item = items.get(0);
         assertThat(items, hasSize(2));

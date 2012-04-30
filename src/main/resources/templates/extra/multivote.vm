@@ -11,8 +11,8 @@
 <table class="grid" data-tableid="$tableId">
     <thead>
         <tr>
-            #foreach ( $header in $headers )
-                <th>$header</th>
+            #foreach ( $column in $header.columns )
+                <th>$column</th>
             #end
             <th>$action.getText('multivote.result')</th>
             <th>$action.getText('multivote.vote')</th>
@@ -31,7 +31,7 @@
             #set ($image = "checkbox_unchecked")
         #end
         <tr class=$classIntr>
-            #foreach ( $field in $item.getFields() )
+            #foreach ( $field in $item.fields )
                 <td>$field</td>
             #end
             <td id="audience.$generalUtil.urlEncode($item.idName)" title="$multiVote.getUserFullNamesAsString($item.audience)">$item.audienceCount</td>

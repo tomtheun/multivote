@@ -5,9 +5,9 @@
         <vendor name="TNG Technology Consulting GmbH" url="http://www.tngtech.com" />
     </plugin-info>
 
-    <resource type="i18n" name="i18n" location="AtlassianPlugin" />
+    <resource type="i18n" name="i18n" location="MultivoteI18N" />
 
-    <macro name='multivote' class='${project.groupId}.MultivoteMacro'
+    <xhtml-macro name='multivote' class='${project.groupId}.MultivoteMacro'
         key='multivote'>
         <resource type="velocity" name="help" location="templates/multivote-help.vm">
             <param name="help-section" value="tables"/>
@@ -19,10 +19,28 @@
             </parameter>
             <parameter name="sort" type="boolean" required="false" />
         </parameters>
+    </xhtml-macro>
+
+    <macro name='multivote' class='${project.groupId}.MultivoteMacro3x'
+        key='multivote-old'>
+        <resource type="velocity" name="help" location="templates/multivote-help.vm">
+            <param name="help-section" value="tables"/>
+        </resource>
+        <category name="confluence-content"/>
+        <parameters>
+            <parameter name="id" type="string" required="true">
+                <alias name=""/>
+            </parameter>
+            <parameter name="sort" type="boolean" required="false" />
+        </parameters>
     </macro>
-    
+
     <component key='multivote-service' class="${project.groupId}.DefaultMultiVoteService" name="Multivote Service">
         <interface>${project.groupId}.MultiVoteService</interface>
+    </component>
+
+    <component key='multivote-macro-service' class="${project.groupId}.MultiVoteMacroService" name="Multivote Macro Service">
+        <interface>${project.groupId}.MultiVoteMacroService</interface>
     </component>
 
     <rest key="rest-service-resources" path="/multivote" version="0.1">

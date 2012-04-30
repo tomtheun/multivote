@@ -3,7 +3,6 @@ package it.com.tngtech.confluence.plugin;
 import static com.atlassian.selenium.browsers.AutoInstallClient.assertThat;
 import static com.atlassian.selenium.browsers.AutoInstallClient.seleniumClient;
 
-import com.atlassian.confluence.plugin.functest.helper.PageHelper;
 import com.atlassian.selenium.SeleniumClient;
 
 public class TestJavaScriptLinks extends BaseIntegration {
@@ -17,10 +16,11 @@ public class TestJavaScriptLinks extends BaseIntegration {
         super.setUp();
 
         selenium = seleniumClient();
-        final PageHelper pageHelper = createMultivoteTable();
-        selenium.open("pages/viewpage.action?pageId=" + pageHelper.getId());
+        selenium.open("display/TST/Multivote+Macro+Test");
+
         //if (need_login)??
         seleniumLogin();
+        ensureClean();
     }
 
     private void seleniumLogin() {
@@ -32,10 +32,10 @@ public class TestJavaScriptLinks extends BaseIntegration {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    public void tearDown() throws Exception {
+        super.tearDown();
         selenium.click("//a[@id='logout-link']/span");
         selenium.waitForPageToLoad("30000");
-        super.tearDown();
     }
 
     protected void refreshPage() {
@@ -74,5 +74,9 @@ public class TestJavaScriptLinks extends BaseIntegration {
 
     private void assertAudienceCountEquals(String tableId, Integer count) {
         assertThat().elementContainsText(audienceLoc(tableId), count.toString()); // TODO
+    }
+
+    protected boolean voted(String tableId) {
+        return !selenium.getText(audienceLoc(tableId)).equals("0");
     }
 }
