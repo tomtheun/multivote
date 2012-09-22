@@ -4,3 +4,5 @@ target
 target.confluence4
 .settings
 .*.swp
+.idea
+multivote.iml

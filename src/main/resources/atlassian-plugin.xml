@@ -8,7 +8,8 @@
     <resource type="i18n" name="i18n" location="MultivoteI18N" />
 
     <xhtml-macro name='multivote' class='${project.groupId}.MultivoteMacro'
-        key='multivote'>
+        key='multivote'
+        icon='/download/resources/com.tngtech.confluence.plugin.multivote:resources/icon.png'>
         <resource type="velocity" name="help" location="templates/multivote-help.vm">
             <param name="help-section" value="tables"/>
         </resource>
@@ -52,6 +53,10 @@
         <resource type="download" name="multivote.js" location="multivote.js" />
         <resource type="download" name="multivote.css" location="css/multivote.css">
             <property key="content-type" value="text/css" />
+        </resource>
+        <resource name="icon.png" type="download"
+            location="images/icon.png">
+            <property key="content-type" value="image/png" />
         </resource>
         <resource name="checkbox_checked.png" type="download"
             location="templates/extra/images/checkbox_checked.png">
