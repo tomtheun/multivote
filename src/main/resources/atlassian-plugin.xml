@@ -9,7 +9,9 @@
 
     <xhtml-macro name='multivote' class='${project.groupId}.MultivoteMacro'
         key='multivote'
-        icon='/download/resources/com.tngtech.confluence.plugin.multivote:resources/icon.png'>
+        icon='/download/resources/com.tngtech.confluence.plugin.multivote:resources/icon.png'
+        documentation-url='https://tngtech-oss.atlassian.net/wiki/display/MV/Usage'
+        hide-body='false'>
         <resource type="velocity" name="help" location="templates/multivote-help.vm">
             <param name="help-section" value="tables"/>
         </resource>
