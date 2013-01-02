@@ -1,45 +1,61 @@
 /*jslint  */
-/*global jQuery: false, AJS: false */
+/*global $: false, AJS: false */
 
-(function ($) {
+(function () {
     "use strict";
-    $(function () {
-        var pageId = AJS.params.multivotePageId,
+
+    function getParameters() {
+        var params;
+        if (AJS.params) {
+            return AJS.params;
+        }
+
+        params = {};
+        $('.parameters, .hidden').find('input').each(function(index, input) {
+            input = $(input);
+            params[input.attr('id')] = input.attr('value');
+        });
+        params.contextPath = $('meta[name="confluence-context-path"]').attr('content');
+        return params;
+    }
+
+    function init() {
+        var params = getParameters(),
+            pageId = params.multivotePageId,
             interestedLink = $("input[ id ^= 'multivote']"),
             getInterestImage = function (interested) {
                 if (interested) {
-                    return AJS.params.interestedImage;
-                } else {
-                    return AJS.params.notInterestedImage;
+                    return params.interestedImage;
                 }
+                return params.notInterestedImage;
             };
 
         interestedLink.click(function () {
             var that = $(this),
-                itemId = that.attr("id").replace(/^multivote./, ""),
+                itemId = that.attr("id").replace(/^multivote\./, ""),
                 interested = (that.attr("data-interest") === "true"),
                 line = that.parent().parent().parent(),
                 audience = line.find("td[ id ^= 'audience']"),
                 tableId = line.parent().parent().attr("data-tableid"),
-                contextPath = AJS.params.contextPath,
+                contextPath = params.contextPath,
                 url;
 
-            if (typeof contextPath === undefined) {
+            if (contextPath === undefined) {
                 contextPath = "";
             }
 
             // TODO use property for url
             url = contextPath + "/rest/multivote/0.1/vote/record/" + pageId + "/" + tableId +
                 "?" + $.param([
-                {name:"itemId", value:itemId},
-                {name:"interested", value:interested}
+                { name: "itemId", value: itemId },
+                { name: "interested", value: interested }
             ]);
 
             $.ajax({
                 type:"POST", dataType:"json", url:url, data:"",
                 timeout:10000,
                 beforeSend:function () {
-                    that.attr("src", AJS.params.progressImage);
+                    that.attr("src", params.progressImage);
                 },
                 error:function () {
                     that.attr("src", getInterestImage(!interested));
@@ -59,5 +75,11 @@
 
             return false;
         });
-    });
-}(jQuery));
+    }
+
+    if (window.ConfluenceMobile) {
+        window.ConfluenceMobile.contentEventAggregator.on("displayed", init);
+    } else {
+        AJS.toInit(init);
+    }
+}());
