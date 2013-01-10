@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 
-import com.atlassian.confluence.pages.Page;
+import com.atlassian.confluence.pages.AbstractPage;
 import com.atlassian.confluence.pages.PageManager;
 import com.atlassian.confluence.security.Permission;
 import com.atlassian.confluence.security.PermissionManager;
@@ -37,14 +37,14 @@ public class MultivoteRestService {
                          @QueryParam("itemId") String itemId,
                          @Context AuthenticationContext authenticationContext) {
         String user = getUser(authenticationContext);
-        Page page = pageManager.getPage((long)Integer.parseInt(pageId));
+        AbstractPage abstractPage = pageManager.getAbstractPage((long) Integer.parseInt(pageId));
 
-        if (userNotPermitted(user, page)) {
+        if (userNotPermitted(user, abstractPage)) {
             log.error("Request from unauthenticated/unauthorized user");
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
-        ItemKey itemKey = new ItemKey(page, tableId, itemId);
+        ItemKey itemKey = new ItemKey(abstractPage, tableId, itemId);
 
         VoteItem item = multiVote.recordInterest(user, interested, itemKey);
         String userFullNamesAsString = multiVote.getUserFullNamesAsString(item.getAudience());
@@ -52,8 +52,8 @@ public class MultivoteRestService {
         return Response.ok(new VoteResponse(itemId, userFullNamesAsString, item.getAudienceCount())).build();
     }
 
-    private boolean userNotPermitted(String user, Page page) {
-        return user == null || !permissionManager.hasPermission(userAccessor.getUser(user), Permission.VIEW, page);
+    private boolean userNotPermitted(String user, AbstractPage abstractPage) {
+        return user == null || !permissionManager.hasPermission(userAccessor.getUser(user), Permission.VIEW, abstractPage);
     }
 
     private String getUser(AuthenticationContext context) {
